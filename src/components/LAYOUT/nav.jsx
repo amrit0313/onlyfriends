@@ -14,7 +14,10 @@ const Navbar = () => {
           <img src={logo} className="h-16 w-16" />
         </div>
         <div className="flex items-center flex-col text-slate-950 font-extrabold   bg-slate-200 h-3/4  relative">
-          <NavLink className="h-20 width-10 p-5 w-full hover:bg-slate-300">
+          <NavLink
+            to="/"
+            className="h-20 width-10 p-5 w-full hover:bg-slate-300"
+          >
             <div className="flex justify-center">
               <HiOutlineHome size={30} style={{ strokeWidth: 3 }} />
               <span className="pt-2 pl-6">Home</span>
@@ -26,36 +29,39 @@ const Navbar = () => {
               <span className="pl-9">Chat</span>
             </div>
           </NavLink>
-          <NavLink className="h-20 w-full p-5 hover:bg-slate-300">
+          <NavLink to="/friends" className="h-20 w-full p-5 hover:bg-slate-300">
             <div className="flex justify-center">
               <LiaUserFriendsSolid size={25} />
               <span className="pl-6">Friends</span>
             </div>
           </NavLink>
-          <NavLink className="h-20 w-full p-5 hover:bg-slate-300">
+          <NavLink to="/people" className="h-20 w-full p-5 hover:bg-slate-300">
             <div className="flex justify-center">
               <TbPlugConnected size={20} />
               <span className="pl-6">People</span>
             </div>
           </NavLink>
-          <button className="flex items-center justify-center absolute w-full h-20 bottom-0 pointer hover:bg-slate-300">
+          <NavLink
+            to="/auth"
+            className="flex items-center justify-center absolute w-full h-20 bottom-0 pointer hover:bg-slate-300"
+          >
             <CiPower size={25} style={{ strokeWidth: 2 }} />
-            <span className="pl-5">Sign out</span>
-          </button>
+            <span className="pl-5">Sign In</span>
+          </NavLink>
         </div>
       </div>
 
       <div className="flex flex-row md:hidden bg-slate-200 h-[60px]  absolute bottom-0 w-full ">
-        <NavLink className="h-20 width-10 p-5 w-full hover:bg-slate-300">
+        <NavLink to="/" className="h-20 width-10 p-5 w-full hover:bg-slate-300">
           <HiOutlineHome size={30} style={{ strokeWidth: 3 }} />
         </NavLink>
-        <NavLink className="h-20 w-full p-5 hover:bg-slate-300">
+        <NavLink to="/chat" className="h-20 w-full p-5 hover:bg-slate-300">
           <BsChatRightDots size={20} />
         </NavLink>
-        <NavLink className="h-20 w-full p-5 hover:bg-slate-300">
+        <NavLink to="friends" className="h-20 w-full p-5 hover:bg-slate-300">
           <LiaUserFriendsSolid size={25} />
         </NavLink>
-        <NavLink className="h-20 w-full p-5 hover:bg-slate-300">
+        <NavLink to="people" className="h-20 w-full p-5 hover:bg-slate-300">
           <TbPlugConnected size={20} />
         </NavLink>
       </div>
