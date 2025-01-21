@@ -10,11 +10,9 @@ const AuthPage = () => {
     password: "",
   });
 
-  
   const toggleLogin = () => {
     setIsRegistered((prev) => !prev);
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();

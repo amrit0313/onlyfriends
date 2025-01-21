@@ -1,7 +1,7 @@
 const Chat = () => {
   return (
-    <div>
-      <p className="text-slate-950 ">this is chat</p>
+    <div className="bg-gradient-to-l from-indigo-200 h-full w-full">
+      <p className="text-slate-950  ">this is chat</p>
     </div>
   );
 };

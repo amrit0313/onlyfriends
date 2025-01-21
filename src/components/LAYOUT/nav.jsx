@@ -13,29 +13,54 @@ const Navbar = () => {
         <div className="flex justify-center items-center bg-slate-950 rounded-br-xl h-1/4 ">
           <img src={logo} className="h-16 w-16" />
         </div>
-        <div className="flex items-center flex-col text-slate-950 font-extrabold   bg-slate-200 h-3/4  relative">
+        <div className="flex items-center flex-col text-slate-950 font-extrabold bg-slate-200 h-3/4  relative">
           <NavLink
             to="/"
-            className="h-20 width-10 p-5 w-full hover:bg-slate-300"
+            className={({ isActive }) =>
+              isActive
+                ? "h-20 w-full p-5 w-full bg-slate-300"
+                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
+            }
           >
             <div className="flex justify-center">
               <HiOutlineHome size={30} style={{ strokeWidth: 3 }} />
               <span className="pt-2 pl-6">Home</span>
             </div>
           </NavLink>
-          <NavLink to="/chat" className="h-20 w-full p-5 hover:bg-slate-300">
+          <NavLink
+            to="/chat"
+            className={({ isActive }) =>
+              isActive
+                ? "h-20 w-full p-5 w-full bg-slate-300"
+                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
+            }
+          >
             <div className="flex justify-center">
               <BsChatRightDots size={20} />
               <span className="pl-9">Chat</span>
             </div>
           </NavLink>
-          <NavLink to="/friends" className="h-20 w-full p-5 hover:bg-slate-300">
+          <NavLink
+            to="/friends"
+            className={({ isActive }) =>
+              isActive
+                ? "h-20 w-full p-5 w-full bg-slate-300"
+                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
+            }
+          >
             <div className="flex justify-center">
               <LiaUserFriendsSolid size={25} />
               <span className="pl-6">Friends</span>
             </div>
           </NavLink>
-          <NavLink to="/people" className="h-20 w-full p-5 hover:bg-slate-300">
+          <NavLink
+            to="/people"
+            className={({ isActive }) =>
+              isActive
+                ? "h-20 w-full p-5 w-full bg-slate-300"
+                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
+            }
+          >
             <div className="flex justify-center">
               <TbPlugConnected size={20} />
               <span className="pl-6">People</span>
@@ -43,7 +68,11 @@ const Navbar = () => {
           </NavLink>
           <NavLink
             to="/auth"
-            className="flex items-center justify-center absolute w-full h-20 bottom-0 pointer hover:bg-slate-300"
+            className={({ isActive }) =>
+              isActive
+                ? "flex items-center justify-center absolute w-full h-20 bottom-0 pointer bg-slate-300"
+                : "flex items-center justify-center absolute w-full h-20 bottom-0 pointer hover:bg-slate-400"
+            }
           >
             <CiPower size={25} style={{ strokeWidth: 2 }} />
             <span className="pl-5">Sign In</span>
@@ -51,7 +80,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="flex flex-row md:hidden bg-slate-200 h-[60px]  absolute bottom-0 w-full ">
+      <div className="flex flex-row md:hidden bg-slate-200 h-[60px]  absolute bottom-0 w-full z-[100] ">
         <NavLink to="/" className="h-20 width-10 p-5 w-full hover:bg-slate-300">
           <HiOutlineHome size={30} style={{ strokeWidth: 3 }} />
         </NavLink>
