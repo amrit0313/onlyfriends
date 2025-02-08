@@ -6,10 +6,13 @@ import { LiaUserFriendsSolid } from "react-icons/lia";
 import { TbPlugConnected } from "react-icons/tb";
 import { CiPower } from "react-icons/ci";
 
-const Navbar = () => {
+const Navbar = ({ ...rest }) => {
+  console.log(rest.className);
   return (
-    <div className="grid">
-      <div className="h-screen bg-slate-200 hidden md:block">
+    <div>
+      <div
+        className={`h-screen bg-slate-200 hidden md:block ${rest.className}`}
+      >
         <div className="flex justify-center items-center bg-slate-950 rounded-br-xl h-1/4 ">
           <img src={logo} className="h-16 w-16" />
         </div>
