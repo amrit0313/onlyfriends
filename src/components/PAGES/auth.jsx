@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { PiEyesBold } from "react-icons/pi";
 import { PiEyeSlashDuotone } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../redux/authslice";
+import "../../styles/loader.css";
 
 const AuthPage = () => {
   const [isRegistered, setIsRegistered] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -25,6 +32,7 @@ const AuthPage = () => {
     let url;
     let payload;
     let headers = { "Content-Type": "application/json" };
+    dispatch(authActions.loginStart());
     if (isRegistered) {
       url = "http://127.0.0.1:8000/v1/auth/token";
       (payload = new URLSearchParams({
@@ -55,21 +63,24 @@ const AuthPage = () => {
         throw new Error("Error");
       }
       const responseData = await response.json();
-      console.log(responseData);
+      localStorage.setItem("access_token", responseData.access_token);
+      localStorage.setItem("refresh_token", responseData.refresh_token);
+      dispatch(authActions.loginSucesss());
+      console.log(auth.isLoggedIn);
     } catch (error) {
-      console.log("error occurred");
+      console.log(error);
     }
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-l from-indigo-400/50 to-gray-300/50">
+    <div className="flex h-screen items-center  justify-center bg-[url('/backauth2.svg')]">
       <form onSubmit={handleSubmit}>
-        <fieldset className="flex flex-col bg-gradient-to-r from-indigo-200/50 to-slate-500/50  shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 px-[8rem] py-[2rem] text-slate-800  font-extrabold rounded-tr-[3rem]">
+        <fieldset className="flex flex-col md:bg-gradient-to-r from-slate-400 to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit  text-white md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
           <legend className="text-xl text-gray-800/50">
             {isRegistered ? "Login" : "Register"}
           </legend>
           {!isRegistered && (
-            <div className="flex gap-2 ">
+            <div className="flex sm:flex-row flex-col gap-2 ">
               <div className="flex flex-col">
                 <label>First Name</label>
                 <input
@@ -142,19 +153,37 @@ const AuthPage = () => {
               {!showPassword && <PiEyeSlashDuotone />}
             </div>
           </div>
-          <button
-            className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
-            type="submit"
-          >
-            {isRegistered ? "Login" : "Register"}
-          </button>
-          <button
-            className="mt-3 underline text-slate-800 hover:text-indigo-800 "
-            type="button"
-            onClick={toggleLogin}
-          >
-            {isRegistered ? "Create Account" : "Login to exisiting"}
-          </button>
+          <div className="flex flex-col relative">
+            {!auth.loading && isRegistered && (
+              <button
+                className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
+                type="submit"
+              >
+                Login
+              </button>
+            )}
+            {!auth.loading && !isRegistered && (
+              <button
+                className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
+                type="submit"
+                onClick={() => navigate("interests")}
+              >
+                Register
+              </button>
+            )}
+            {auth.loading && (
+              <div className="loader p-5 absolute left-50"></div>
+            )}
+            {!auth.loading && (
+              <button
+                className="mt-3 underline text-rose-400 hover:text-indigo-800 "
+                type="button"
+                onClick={toggleLogin}
+              >
+                {isRegistered ? "Create Account" : "Login to exisiting"}
+              </button>
+            )}
+          </div>
         </fieldset>
       </form>
     </div>

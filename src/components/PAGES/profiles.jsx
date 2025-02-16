@@ -1,8 +1,8 @@
+import React from "react";
 import { useParams } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
 import { FiMessageCircle } from "react-icons/fi";
 
-// Mock user data - in a real app, this would come from an API
 const mockUsers = {
   1: {
     name: "Sarah Parker",
@@ -40,7 +40,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-l from-indigo-200/50">
-      <main className="md:ml-64 pb-16 md:pb-0">
+      <main className=" pb-16 md:pb-0">
         <div className="max-w-3xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="relative h-48">

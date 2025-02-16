@@ -1,101 +1,98 @@
 import { NavLink } from "react-router-dom";
-import logo from "../../assets/img.svg";
-import { HiOutlineHome } from "react-icons/hi";
-import { BsChatRightDots } from "react-icons/bs";
-import { LiaUserFriendsSolid } from "react-icons/lia";
-import { TbPlugConnected } from "react-icons/tb";
-import { CiPower } from "react-icons/ci";
+import { RxHamburgerMenu } from "react-icons/rx";
 
-const Navbar = ({ ...rest }) => {
-  console.log(rest.className);
+import {
+  LuHouse,
+  LuMessageCircle,
+  LuUsers,
+  LuPlug,
+  LuLogIn,
+} from "react-icons/lu";
+import { useState } from "react";
+
+const Navbar = () => {
+  const [isCollasped, setIsCollasped] = useState(false);
+  const navlinks = [
+    {
+      to: "/",
+      icon: <LuHouse size={25} />,
+      label: "Home",
+    },
+    { to: "/chat", icon: <LuMessageCircle size={25} />, label: "Chat" },
+    {
+      to: "/friends",
+      icon: <LuUsers size={25} />,
+      label: "Friends",
+    },
+    { to: "/people", icon: <LuPlug size={25} />, label: "People" },
+  ];
+
   return (
     <div>
-      <div
-        className={`h-screen bg-slate-200 hidden md:block ${rest.className}`}
-      >
-        <div className="flex justify-center items-center bg-slate-950 rounded-br-xl h-1/4 ">
-          <img src={logo} className="h-16 w-16" />
-        </div>
-        <div className="flex items-center flex-col text-slate-950 font-extrabold bg-slate-200 h-3/4  relative">
+      <div className="relative z-[1]">
+        <button
+          onClick={() => setIsCollasped((prev) => !prev)}
+          className="hidden xl:block absolute right-[-1.5rem] top-10 p-5  bg-white shadow-xl shadow-slate-400 rounded-full  z-[2]"
+        >
+          <RxHamburgerMenu />
+        </button>
+        <div className={`h-screen bg-slate-200 relative hidden lg:block`}>
+          <div className="p-6">
+            <h1 className="text-pretty mb-10 font-bold text-2xl text-slate-600 hidden xl:block ">
+              {isCollasped ? "O F" : "OnlyFriends"}
+            </h1>
+            <h1 className="xl:hidden text-pretty mb-10 font-bold text-2xl text-slate-600">
+              O F
+            </h1>
+          </div>
+          <div className="flex items-center flex-col text-slate-950 font-extrabold  pb-2  ">
+            {navlinks.map((link, index) => (
+              <NavLink
+                key={index}
+                to={link.to}
+                className={({ isActive }) =>
+                  (isActive ? " bg-slate-300" : " hover:bg-slate-300/50") +
+                  " h-20 w-full flex p-10  items-center "
+                }
+              >
+                <div className="flex items-center ">
+                  {link.icon}
+                  {!isCollasped && (
+                    <span className="hidden xl:flex pl-8 pr-10">
+                      {link.label}
+                    </span>
+                  )}
+                </div>
+              </NavLink>
+            ))}
+          </div>
           <NavLink
-            to="/"
             className={({ isActive }) =>
-              isActive
-                ? "h-20 w-full p-5 w-full bg-slate-300"
-                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
+              (isActive ? " bg-slate-300" : " hover:bg-slate-300/50") +
+              " h-20 w-full flex p-10  items-center absolute bottom-0  text-slate-950 font-extrabold "
             }
+            to="auth"
           >
-            <div className="flex justify-center">
-              <HiOutlineHome size={30} style={{ strokeWidth: 3 }} />
-              <span className="pt-2 pl-6">Home</span>
+            <div className="flex items-center ">
+              <LuLogIn size={27} />
+              {!isCollasped && (
+                <span className="pl-5 hidden xl:flex">Sign out</span>
+              )}
             </div>
-          </NavLink>
-          <NavLink
-            to="/chat"
-            className={({ isActive }) =>
-              isActive
-                ? "h-20 w-full p-5 w-full bg-slate-300"
-                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
-            }
-          >
-            <div className="flex justify-center">
-              <BsChatRightDots size={20} />
-              <span className="pl-9">Chat</span>
-            </div>
-          </NavLink>
-          <NavLink
-            to="/friends"
-            className={({ isActive }) =>
-              isActive
-                ? "h-20 w-full p-5 w-full bg-slate-300"
-                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
-            }
-          >
-            <div className="flex justify-center">
-              <LiaUserFriendsSolid size={25} />
-              <span className="pl-6">Friends</span>
-            </div>
-          </NavLink>
-          <NavLink
-            to="/people"
-            className={({ isActive }) =>
-              isActive
-                ? "h-20 w-full p-5 w-full bg-slate-300"
-                : "h-20 w-full p-5 w-full hover:bg-slate-300/50"
-            }
-          >
-            <div className="flex justify-center">
-              <TbPlugConnected size={20} />
-              <span className="pl-6">People</span>
-            </div>
-          </NavLink>
-          <NavLink
-            to="/auth"
-            className={({ isActive }) =>
-              isActive
-                ? "flex items-center justify-center absolute w-full h-20 bottom-0 pointer bg-slate-300"
-                : "flex items-center justify-center absolute w-full h-20 bottom-0 pointer hover:bg-slate-400"
-            }
-          >
-            <CiPower size={25} style={{ strokeWidth: 2 }} />
-            <span className="pl-5">Sign In</span>
           </NavLink>
         </div>
       </div>
 
-      <div className="flex flex-row md:hidden bg-slate-200 h-[60px]  absolute bottom-0 w-full z-[100] ">
-        <NavLink to="/" className="h-20 width-10 p-5 w-full hover:bg-slate-300">
-          <HiOutlineHome size={30} style={{ strokeWidth: 3 }} />
-        </NavLink>
-        <NavLink to="/chat" className="h-20 w-full p-5 hover:bg-slate-300">
-          <BsChatRightDots size={20} />
-        </NavLink>
-        <NavLink to="friends" className="h-20 w-full p-5 hover:bg-slate-300">
-          <LiaUserFriendsSolid size={25} />
-        </NavLink>
-        <NavLink to="people" className="h-20 w-full p-5 hover:bg-slate-300">
-          <TbPlugConnected size={20} />
-        </NavLink>
+      <div className=" flex flex-row lg:hidden bg-slate-200 h-[60px] absolute bottom-0 w-full z-[100] ">
+        {navlinks.slice(0, 4).map((link, index) => (
+          <NavLink
+            key={index}
+            to={link.to}
+            className="h-20 width-10 p-5 w-full hover:bg-slate-300 "
+          >
+            {link.icon}
+          </NavLink>
+        ))}
       </div>
     </div>
   );

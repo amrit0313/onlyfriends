@@ -2,7 +2,16 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        l13: {
+          "100%": { transform: "rotate(1turn)" },
+        },
+      },
+      animation: {
+        l13: "l13 1s infinite linear",
+      },
+    },
   },
   plugins: [],
 };

@@ -1,25 +1,32 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Navbar from "./components/LAYOUT/nav";
 import Home from "./components/LAYOUT/home";
 import Chat from "./components/PAGES/chat";
 import AuthPage from "./components/PAGES/auth";
 import People from "./components/PAGES/people";
 import Friends from "./components/PAGES/friends";
-import Profile from "./components/PAGES/profile";
+import Profile from "./components/PAGES/profiles";
+import UserProfile from "./components/PAGES/userprofile";
+import Interests from "./components/PAGES/interests";
+import { useSelector } from "react-redux";
 const App = () => {
+  const auth = useSelector((state) => state.auth);
+  const token = localStorage.getItem("access_token");
   return (
-    <div className="grid grid-cols-5 row-span-10 relative h-screen w-full overflow-hidden ">
-      <div className="rowspan-1 md:row-span-4 md:col-span-1">
+    <div className="flex  h-screen w-full overflow-hidden ">
+      <div className="flex-shrink-1">
         <Navbar />
       </div>
-      <div className="h-screen md:col-span-4 col-span-5 row-span-9 bg-slate-100">
+      <div className="flex-grow bg-slate-100 overflow-auto ">
         <Routes>
+          <Route path="/" element={token ? <Home /> : <AuthPage />} />
           <Route path="auth" element={<AuthPage />} />
-          <Route path="/" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/people" element={<People />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/people/:userId" element={<Profile />} />
+          <Route path="/user" element={<UserProfile />} />
+          <Route path="interests" element={<Interests />} />
         </Routes>
       </div>
     </div>
