@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 const UserProfile = () => {
   const [user, setUser] = useState("");
+  const token = localStorage.getItem("access_token");
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -12,18 +13,19 @@ const UserProfile = () => {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error("error occurred", errorData);
+          const errorData = await response.text();
+          console.error("Error occurred:", errorData);
+          throw new Error("Unprocessable entity");
         }
         const responseData = await response.json();
+        console.log(responseData);
         setUser(responseData);
       } catch (error) {
-        console.log(errorData);
         console.log(error);
       }
     };
@@ -54,7 +56,7 @@ const UserProfile = () => {
               <div className="space-y-4">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
-                    {user.fullname}
+                    {user.full_name}
                   </h1>
                   <p className="text-gray-500">New York, USA</p>
                 </div>

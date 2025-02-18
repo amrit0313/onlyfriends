@@ -12,6 +12,7 @@ import { useState } from "react";
 
 const Navbar = () => {
   const [isCollasped, setIsCollasped] = useState(false);
+  const token = localStorage.getItem("access_token");
   const navlinks = [
     {
       to: "/",
@@ -76,7 +77,7 @@ const Navbar = () => {
             <div className="flex items-center ">
               <LuLogIn size={27} />
               {!isCollasped && (
-                <span className="pl-5 hidden xl:flex">Sign out</span>
+                <span className="pl-5 hidden xl:flex">{token?"Sign Out":"Sign In"}</span>
               )}
             </div>
           </NavLink>

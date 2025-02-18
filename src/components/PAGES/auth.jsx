@@ -75,7 +75,7 @@ const AuthPage = () => {
   return (
     <div className="flex h-screen items-center  justify-center bg-[url('/backauth2.svg')]">
       <form onSubmit={handleSubmit}>
-        <fieldset className="flex flex-col md:bg-gradient-to-r from-slate-400 to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit  text-white md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
+        <fieldset className="flex flex-col md:bg-gradient-to-r from-slate-400 to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit  text-slate-800 md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
           <legend className="text-xl text-gray-800/50">
             {isRegistered ? "Login" : "Register"}
           </legend>
@@ -158,6 +158,7 @@ const AuthPage = () => {
               <button
                 className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
                 type="submit"
+                onClick={() => navigate("/")}
               >
                 Login
               </button>
@@ -166,7 +167,7 @@ const AuthPage = () => {
               <button
                 className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
                 type="submit"
-                onClick={() => navigate("interests")}
+                onClick={() => navigate("/interests")}
               >
                 Register
               </button>
