@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Interest = [
@@ -34,22 +34,26 @@ const Interest = [
 ];
 
 const Interests = () => {
-  const [interests, setInterests] = useState([]);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const navigate = useNavigate();
 
   const submitHandler = async () => {
     console.log("function called");
+    console.log(selectedInterests.map((interest) => interest.name));
     try {
+      const formData = new FormData();
+      formData.append(
+        "interests",
+        selectedInterests.map((interest) => interest.name).join(",")
+      );
+
       const response = await fetch(
-        "http://127.0.0.1:8000/v1/profile/add-interests",
+        `${import.meta.env.VITE_API_URL}/v1/profile/add-interests`,
         {
           method: "POST",
-          body: JSON.stringify({
-            interests: selectedInterests,
-          }),
+          body: formData,
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
@@ -57,40 +61,46 @@ const Interests = () => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      const responseData = await response.json();
+      console.log(responseData);
       navigate("/user");
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
   };
 
-  const handleClick = (id) => {
+  const handleClick = (interest) => {
     setSelectedInterests((prev) =>
-      prev.includes(id)
-        ? prev.filter((interestId) => interestId !== id)
-        : [...prev, id]
+      prev.some((selected) => selected.id === interest.id)
+        ? prev.filter((selected) => selected.id !== interest.id)
+        : [...prev, interest]
     );
   };
 
   return (
     <>
-      <div className="flex flex-row justify-center items-center gap-10 flex-wrap m-5 md:m-20 py-20 relative">
-        {Interest?.map((interest) => (
-          <button
-            key={interest.id}
-            onClick={() => handleClick(interest.id)}
-            className={`px-10 py-2 border-2  border-slate-300 rounded-xl ${
-              selectedInterests.includes(interest.id)
-                ? "bg-gray-400 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {interest.name}
-          </button>
-        ))}
+      <div className="flex items-center gap-10 m-5 md:m-20 pt-5 pb-32 relative">
+        <div className="flex justify-evenly flex-wrap gap-5 pb-20">
+          {Interest?.map((interest) => (
+            <button
+              key={interest.id}
+              onClick={() => handleClick(interest)}
+              className={`w-32 py-2 border-2 border-slate-300 rounded-xl ${
+                selectedInterests.some(
+                  (selected) => selected.id === interest.id
+                )
+                  ? "bg-gray-400 text-white"
+                  : "bg-gray-200"
+              }`}
+            >
+              {interest.name}
+            </button>
+          ))}
+        </div>
         <button
           type="submit"
           onClick={submitHandler}
-          className="bg-purple-500 px-10 py-5 absolute right-0 bottom-0 border-2 border-gray-400 rounded-2xl hover:scale-110 text-white"
+          className="bg-black shadow-xl shadow-slate-300 px-10 py-5 absolute right-0 bottom-14 lg:bottom-0 border-2 border-gray-700 rounded-2xl hover:bg-gray-800 active:animate-bounce active:bg-black text-white"
         >
           Continue to profile
         </button>

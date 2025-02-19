@@ -11,7 +11,7 @@ const PostModal = ({ close }) => {
     console.log(token);
     console.log(post);
     try {
-      const response = await fetch("http://127.0.0.1:8000/v1/posts", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/posts`, {
         method: "POST",
         body: JSON.stringify({
           content: post,

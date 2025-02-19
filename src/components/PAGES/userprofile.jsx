@@ -1,36 +1,33 @@
 import { LuCamera } from "react-icons/lu";
 import { FiEdit2 } from "react-icons/fi";
 import { useEffect, useState } from "react";
+import download from "../../assets/download.png";
+import ProfileEditModal from "./profileEditmodal";
 
 const UserProfile = () => {
   const [user, setUser] = useState("");
   const token = localStorage.getItem("access_token");
+  const [openEditModal, setOpenEditModal] = useState(false);
   useEffect(() => {
     const fetchUserInfo = async () => {
-      try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/v1/auth/user_info",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          const errorData = await response.text();
-          console.error("Error occurred:", errorData);
-          throw new Error("Unprocessable entity");
-        }
-        const responseData = await response.json();
-        console.log(responseData);
-        setUser(responseData);
-      } catch (error) {
-        console.log(error);
-      }
+      const [response1, response2] = await Promise.all([
+        fetch(`${import.meta.env.VITE_API_URL}/v1/auth/user_info`),
+        fetch(`${import.meta.env.VITE_API_URL}/v1/profile`),
+      ]);
+      const result1 = response1.json();
+      const result2 = response2.json();
+      setUser(result1);
     };
-    fetchUserInfo();
+    try {
+      fetchUserInfo();
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
   }, []);
+
+  const editHandler = () => {
+    setOpenEditModal((prev) => !prev);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 bg-gradient-to-l from-indigo-200/50">
@@ -45,11 +42,14 @@ const UserProfile = () => {
             <div className="relative px-6 pb-6">
               <div className="relative -mt-16 mb-4">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+                  src={user?.profile_pic ? profile.profile_pic : download}
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white object-cover"
                 />
-                <button className="absolute bottom-0 right-0 p-2 rounded-full bg-white shadow-sm text-gray-600 hover:text-slate-500 transition-colors">
+                <button
+                  onClick={editHandler}
+                  className="absolute bottom-0 right-0 p-2 rounded-full bg-white shadow-sm text-gray-600 hover:text-slate-500 transition-colors"
+                >
                   <FiEdit2 size={20} />
                 </button>
               </div>
@@ -110,6 +110,7 @@ const UserProfile = () => {
           </div>
         </div>
       </main>
+      {openEditModal && <ProfileEditModal close={editHandler} />}
     </div>
   );
 };
