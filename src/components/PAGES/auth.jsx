@@ -34,14 +34,14 @@ const AuthPage = () => {
     let headers = { "Content-Type": "application/json" };
     dispatch(authActions.loginStart());
     if (isRegistered) {
-      url = "http://127.0.0.1:8000/v1/auth/token";
+      url = `${import.meta.env.VITE_API_URL}/v1/auth/token`;
       (payload = new URLSearchParams({
         username: userData.username,
         password: userData.password,
       })),
         (headers = { "Content-Type": "application/x-www-form-urlencoded" });
     } else {
-      url = "http://127.0.0.1:8000/v1/auth/signup";
+      url = `${import.meta.env.VITE_API_URL}/v1/auth/signup`;
       payload = JSON.stringify({
         email: userData.email,
         password: userData.password,
