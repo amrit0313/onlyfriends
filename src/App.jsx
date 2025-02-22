@@ -8,7 +8,6 @@ import Friends from "./components/PAGES/friends";
 import Profile from "./components/PAGES/profiles";
 import UserProfile from "./components/PAGES/userprofile";
 import Interests from "./components/PAGES/interests";
-import { useSelector } from "react-redux";
 const App = () => {
   const token = localStorage.getItem("access_token");
   return (
