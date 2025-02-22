@@ -33,8 +33,33 @@ export const SuggestionCard = ({
     setShowComments(!showComments);
   };
 
-  const handleConnect = (e) => {
-    e.stopPropagation();
+  const handleConnect = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/v1/friends/send`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            sender_id: localStorage.getItem("user_id"),
+            receiver_id: id,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        throw new Error("error occurred");
+      }
+      const responseData = response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
