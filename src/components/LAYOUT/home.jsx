@@ -1,22 +1,46 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { PiSignOutFill } from "react-icons/pi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Posts from "../store/posts";
-import PostModal from "./postModal";
+import "../../styles/tooltip.css";
+import download from "../../assets/download.png";
 const Home = () => {
   const navigate = useNavigate();
-  const randomNumber = Math.floor(Math.random() * 100);
   const [post, setPost] = useState("");
   const token = localStorage.getItem("access_token");
   const [postUpdated, setPostsUpdated] = useState(false);
-  const [isModelOpen, SetIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/v1/profile/myprofile`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log("Error:", errorData);
+          throw new Error("Error");
+        }
+        const responseData = await response.json();
+        setUser(responseData.profile_pic);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
   const postHandler = async (e) => {
     e.preventDefault();
-    if (!post) {
-      return;
-    }
-    console.log(token);
-    console.log(post);
+    console.log("funcction");
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/posts`, {
         method: "POST",
@@ -34,57 +58,77 @@ const Home = () => {
         throw new Error("Error");
       }
       const responseData = await response.json();
-      console.log("response", responseData);
+      console.log(responseData);
       setPost("");
       setPostsUpdated((prev) => !prev);
     } catch (error) {
-      console.log(errorData);
       console.log(error);
     }
   };
-  const modalOpenHandler = () => {
-    SetIsModalOpen((prev) => !prev);
+
+  const handleSignout = () => {
+    localStorage.clear();
+    navigate("auth");
+  };
+  const getProfilePicUrl = (path) => {
+    return `${import.meta.env.VITE_API_URL}/${path}`;
   };
 
   return (
     <div className=" flex">
-      <div className="flex flex-col   gap-10   w-full lg:w-3/4 h-screen  overflow-scroll scrollbar-thumb-green-500 scrollbar-track-green-200 relative">
-        <div className="flex  items-center justify-center md:h-[7rem] md:w-[7rem] h-[5rem] w-[5rem] bg-white m-2 ml-10 border-2 rounded-full border-slate-500 ">
-          <button
-            className="flex justify-center items-center"
-            onClick={() => navigate("/user")}
-          >
-            <img
-              className="rounded-full md:h-[6rem] md:w-[6rem] h-[4rem] w-[4rem] m-2 "
-              src={`https://picsum.photos/seed/${randomNumber}/200/300`}
-              alt="image is displaying...."
-            />
-          </button>
+      <div className="flex flex-col items-start   gap-5   w-full lg:w-3/4 h-screen  overflow-scroll scrollbar-thumb-green-500 scrollbar-track-green-200 relative">
+        <div className="flex justify-evenly w-full">
+          <div className=" flex justify-between md:justify-center items-center w-full gap-10 mx-5">
+            <div className="flex  h-[6rem] lg:h-[7rem] aspect-square bg-white m-2 ml-10 border-2 rounded-full border-slate-500 ">
+              <button
+                className="flex justify-center items-center"
+                onClick={() => navigate("/user")}
+              >
+                <img
+                  className="rounded-full h-[5rem] lg:h-[6rem] aspect-square m-2 "
+                  src={user ? getProfilePicUrl(user) : download}
+                  alt="image is displaying...."
+                />
+              </button>
+            </div>
+            <div className="hidden md:flex w-8/12  justify-center relative flex-wrap  top-20 md:top-0">
+              <textarea
+                className="w-full py-6 pl-3 pr-16  border-2 border-slate-500 rounded-3xl "
+                value={post}
+                onChange={(e) => setPost(e.target.value)}
+                type="text"
+                placeholder="Write something to your so called OnlyFriends"
+              ></textarea>
+              <button
+                onClick={(e) => postHandler(e)}
+                className=" bg-transparent  font-extrabold text-indigo-600 absolute right-0 top-1/2 translate-x-[-50%] translate-y-[-50%]"
+              >
+                POST
+              </button>
+            </div>
+            <button className="tooltip" onClick={handleSignout}>
+              <PiSignOutFill size={40} />
+              <span className="tooltiptext">Log out</span>
+            </button>
+          </div>
         </div>
-        <div className="  absolute sm:w-3/5 ml-5 w-11/12 right-5 sm:right-24 top-24 sm:top-10 z-[100]">
-          <input
-            className="w-full px-10 py-4  border-2 border-slate-500 rounded-3xl "
-            onFocus={modalOpenHandler}
+        <div className="flex md:hidden w-11/12   relative flex-wrap mx-7">
+          <textarea
+            className="w-full py-6 pl-3 pr-16  border-2 border-slate-500 rounded-3xl "
             value={post}
             onChange={(e) => setPost(e.target.value)}
             type="text"
             placeholder="Write something to your so called OnlyFriends"
-          />
+          ></textarea>
           <button
             onClick={postHandler}
-            className="bg-transparent absolute top-5 right-5 font-extrabold text-indigo-600 pl-4"
+            className=" bg-transparent  font-extrabold text-indigo-600 absolute right-0 top-1/2 translate-x-[-50%] translate-y-[-50%]"
           >
             POST
           </button>
-          {isModelOpen && <PostModal close={modalOpenHandler} />}
         </div>
-        <div className="flex flex-col relative items-center mb-20">
+        <div className="flex flex-col w-full relative items-center mb-20">
           <Posts refetch={postUpdated} />
-        </div>
-        <div className="lg:hidden z-10 absolute top-4 right-10">
-          <NavLink to="/auth">
-            <PiSignOutFill size={30} />
-          </NavLink>
         </div>
       </div>
       <div className="hidden lg:flex flex-col items-start  h-screen w-1/4 bg-slate-200">

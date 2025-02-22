@@ -53,7 +53,6 @@ const Interests = () => {
           method: "POST",
           body: formData,
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }

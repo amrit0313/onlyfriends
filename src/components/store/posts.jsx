@@ -1,16 +1,45 @@
 import { useEffect, useState } from "react";
 import { LuHeart } from "react-icons/lu";
+import { useSelector } from "react-redux";
 
 const Posts = ({ refetch }) => {
   const [likedPosts, setLikedPosts] = useState({});
   const token = localStorage.getItem("access_token");
   const [data, setData] = useState([]);
 
-  const handleLike = (id) => {
-    setLikedPosts((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+  const handleLike = async (id) => {
+    setLikedPosts((prev) => {
+      const updatedLikes = {
+        ...prev,
+        [id]: !prev[id],
+      };
+      return updatedLikes;
+    });
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/v1/posts/vote`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            post_id: likedPosts.id,
+            username: localStorage.getItem("username"),
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log("Error:", errorText);
+        throw new Error("Error fetching posts");
+      }
+      const responseData = await response.json();
+      setData(responseData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { RxHamburgerMenu } from "react-icons/rx";
 
 import {
@@ -9,6 +9,7 @@ import {
   LuLogIn,
 } from "react-icons/lu";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [isCollasped, setIsCollasped] = useState(false);
@@ -67,20 +68,22 @@ const Navbar = () => {
               </NavLink>
             ))}
           </div>
-          <NavLink
-            className={({ isActive }) =>
-              (isActive ? " bg-slate-300" : " hover:bg-slate-300/50") +
-              " h-20 w-full flex p-10  items-center absolute bottom-0  text-slate-950 font-extrabold "
-            }
-            to="auth"
-          >
-            <div className="flex items-center ">
-              <LuLogIn size={27} />
-              {!isCollasped && (
-                <span className="pl-5 hidden xl:flex">{token?"Sign Out":"Sign In"}</span>
-              )}
-            </div>
-          </NavLink>
+          {!token && (
+            <NavLink
+              className={({ isActive }) =>
+                (isActive ? " bg-slate-300" : " hover:bg-slate-300/50") +
+                " h-20 w-full flex p-10  items-center absolute bottom-0  text-slate-950 font-extrabold "
+              }
+              to="auth"
+            >
+              <button className="flex items-center ">
+                <LuLogIn size={27} />
+                {!isCollasped && (
+                  <span className="pl-5 hidden xl:flex">Sign In</span>
+                )}
+              </button>
+            </NavLink>
+          )}
         </div>
       </div>
 

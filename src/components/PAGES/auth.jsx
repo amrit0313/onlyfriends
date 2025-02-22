@@ -5,13 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../redux/authslice";
 import "../../styles/loader.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const AuthPage = () => {
   const [isRegistered, setIsRegistered] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem("access_token");
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -58,24 +61,32 @@ const AuthPage = () => {
       });
 
       if (!response.ok) {
+        toast("error occurred!");
+        setError(true);
         const errorData = await response.json();
         console.log("Error:", errorData);
         throw new Error("Error");
       }
       const responseData = await response.json();
       localStorage.setItem("access_token", responseData.access_token);
-      localStorage.setItem("refresh_token", responseData.refresh_token);
-      dispatch(authActions.loginSucesss());
-      console.log(auth.isLoggedIn);
+      localStorage.setItem("username", responseData.username);
+      localStorage.setItem("user_id", responseData.user_id);
+      dispatch(authActions.loginSuccess());
+      if (isRegistered) {
+        navigate("/");
+      } else {
+        navigate("/interests");
+      }
     } catch (error) {
       console.log(error);
+      dispatch(authActions.loginFailure());
     }
   };
 
   return (
-    <div className="flex h-screen items-center  justify-center bg-[url('/backauth2.svg')]">
+    <div className="flex h-screen items-center  justify-center bg-[url('/backauth2.svg')] bg-cover">
       <form onSubmit={handleSubmit}>
-        <fieldset className="flex flex-col md:bg-gradient-to-r from-slate-400 to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit  text-slate-800 md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
+        <fieldset className="flex flex-col  md:bg-gradient-to-r from-slate-400  to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit min-h-fit  text-slate-800 md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
           <legend className="text-xl text-gray-800/50">
             {isRegistered ? "Login" : "Register"}
           </legend>
@@ -135,7 +146,7 @@ const AuthPage = () => {
             </div>
           )}
           <label>Password</label>
-          <div className="flex flex-col relative">
+          <div className="flex flex-col justify-start relative">
             <input
               className="border-2 border-slate-700 mb-5 pl-1 pr-[5rem] py-1"
               type={showPassword ? "text" : "password"}
@@ -154,27 +165,17 @@ const AuthPage = () => {
             </div>
           </div>
           <div className="flex flex-col relative">
-            {!auth.loading && isRegistered && (
+            {!auth.loading && (
               <button
                 className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
                 type="submit"
-                onClick={() => navigate("/")}
               >
-                Login
+                {isRegistered ? "Login" : "Register"}
               </button>
             )}
-            {!auth.loading && !isRegistered && (
-              <button
-                className="bg-slate-950 text-white px-5 py-2 hover:bg-gradient-to-l from-slate-800 to-slate-400"
-                type="submit"
-                onClick={() => navigate("/interests")}
-              >
-                Register
-              </button>
-            )}
-            {auth.loading && (
-              <div className="loader p-5 absolute left-50"></div>
-            )}
+
+            {error && <ToastContainer />}
+
             {!auth.loading && (
               <button
                 className="mt-3 underline text-rose-400 hover:text-indigo-800 "
@@ -184,6 +185,9 @@ const AuthPage = () => {
                 {isRegistered ? "Create Account" : "Login to exisiting"}
               </button>
             )}
+          </div>
+          <div className="flex  w-full justify-around">
+            {auth.loading && <div className="loader"></div>}
           </div>
         </fieldset>
       </form>

@@ -15,7 +15,6 @@ export const SuggestionCard = ({
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const navigate = useNavigate();
-
   const handleLike = (e) => {
     e.stopPropagation();
     setIsLiked(!isLiked);
@@ -41,7 +40,7 @@ export const SuggestionCard = ({
   return (
     <div
       className="relative group cursor-pointer"
-      onClick={() => navigate(`/people/${id}`)}
+      onClick={() => navigate(`/people/${name}`)}
     >
       <div className="relative overflow-hidden rounded-xl bg-white/90 backdrop-blur-sm border border-gray-100 shadow-lg transition-all duration-300 hover:shadow-xl group-hover:animate-card-hover">
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-slate-500">
@@ -58,7 +57,7 @@ export const SuggestionCard = ({
         <div className="p-4">
           <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
           <div className="mt-2 flex flex-wrap gap-2">
-            {interests.map((interest, index) => (
+            {interests?.map((interest, index) => (
               <span
                 key={index}
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-300/50 text-slate-600"

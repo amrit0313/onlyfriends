@@ -7,25 +7,21 @@ const AuthSlice = createSlice({
     token: null,
     loading: false,
     error: null,
-    user: null,
-    email: null,
   },
   reducers: {
     loginStart(state) {
       state.loading = true;
       state.error = null;
     },
-    loginSucesss(state) {
+    loginSuccess(state) {
       state.loading = false;
       state.isLoggedIn = true;
     },
-    loginFailure(state, action) {
+    loginFailure(state) {
       state.loading = false;
-      state.error = action.payload;
     },
     logout(state) {
       state.isLoggedIn = false;
-      state.user = null;
     },
   },
 });

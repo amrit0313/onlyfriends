@@ -5,28 +5,76 @@ import download from "../../assets/download.png";
 import ProfileEditModal from "./profileEditmodal";
 
 const UserProfile = () => {
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState({
+    full_name: "",
+    username: "",
+  });
   const token = localStorage.getItem("access_token");
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [profileData, setProfileData] = useState({
+    date_of_birth: "",
+    gender: "",
+    bio: "",
+    profile_pic: null,
+  });
+  const [interests, setInterest] = useState([]);
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const [response1, response2] = await Promise.all([
-        fetch(`${import.meta.env.VITE_API_URL}/v1/auth/user_info`),
-        fetch(`${import.meta.env.VITE_API_URL}/v1/profile`),
-      ]);
-      const result1 = response1.json();
-      const result2 = response2.json();
-      setUser(result1);
+      try {
+        const [response1, response2, response3] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/v1/auth/user_info`, {
+            headers: {
+              "content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(`${import.meta.env.VITE_API_URL}/v1/profile/myprofile`, {
+            headers: {
+              "content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(
+            `${import.meta.env.VITE_API_URL}/v1/profile/myprofile/interests`,
+            {
+              headers: {
+                "content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          ),
+        ]);
+
+        const result1 = await response1.json();
+        setUser({
+          full_name: result1.full_name || "jpt",
+          username: result1.username || "jpt",
+        });
+
+        const result2 = await response2.json();
+        setProfileData({
+          date_of_birth: result2.date_of_birth || "",
+          gender: result2.gender || "",
+          bio: result2.bio || "",
+          profile_pic: result2.profile_pic || null,
+          location: result2.location || "",
+        });
+        const result3 = await response3.json();
+        let arr = result3[0].split(",");
+        setInterest(arr);
+        console.log(arr);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
     };
-    try {
-      fetchUserInfo();
-    } catch (error) {
-      console.error("Error fetching data", error);
-    }
+    fetchUserInfo();
   }, []);
 
   const editHandler = () => {
     setOpenEditModal((prev) => !prev);
+  };
+  const getProfilePicUrl = (path) => {
+    return `${import.meta.env.VITE_API_URL}/${path}`;
   };
 
   return (
@@ -42,7 +90,11 @@ const UserProfile = () => {
             <div className="relative px-6 pb-6">
               <div className="relative -mt-16 mb-4">
                 <img
-                  src={user?.profile_pic ? profile.profile_pic : download}
+                  src={
+                    profileData?.profile_pic
+                      ? getProfilePicUrl(profileData.profile_pic)
+                      : download
+                  }
                   alt="Profile"
                   className="w-32 h-32 rounded-full border-4 border-white object-cover"
                 />
@@ -58,7 +110,7 @@ const UserProfile = () => {
                   <h1 className="text-2xl font-bold text-gray-900">
                     {user.full_name}
                   </h1>
-                  <p className="text-gray-500">New York, USA</p>
+                  <p className="text-gray-500">{profileData.location}</p>
                 </div>
                 <div className="flex gap-4">
                   <div className="text-center">
@@ -85,25 +137,19 @@ const UserProfile = () => {
                     Interests
                   </h2>
                   <div className="flex flex-wrap gap-2">
-                    {["Photography", "Travel", "Art", "Music", "Fashion"].map(
-                      (interest) => (
-                        <span
-                          key={interest}
-                          className="px-3 py-1 rounded-full text-sm bg-slate-300/50 text-slate-600"
-                        >
-                          {interest}
-                        </span>
-                      )
-                    )}
+                    {interests?.map((interest) => (
+                      <span
+                        key={interest}
+                        className="px-3 py-1 rounded-full text-sm bg-slate-300/50 text-slate-600"
+                      >
+                        {interest}
+                      </span>
+                    ))}
                   </div>
                 </div>
                 <div>
-                  <h2 className="font-semibold text-gray-900 mb-2">About</h2>
-                  <p className="text-gray-600">
-                    Professional photographer and digital artist based in New
-                    York. Love capturing moments and creating beautiful visual
-                    stories.
-                  </p>
+                  <h2 className="font-semibold text-gray-900 mb-2">Bio</h2>
+                  <p className="text-gray-600">{profileData.bio}</p>
                 </div>
               </div>
             </div>
