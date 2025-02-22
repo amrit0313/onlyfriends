@@ -2,6 +2,7 @@ import { LuHeart, LuMessageCircle, LuUserPlus } from "react-icons/lu";
 import { MdNotInterested } from "react-icons/md";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CiLocationArrow1 } from "react-icons/ci";
 
 export const SuggestionCard = ({
   id,
@@ -31,35 +32,6 @@ export const SuggestionCard = ({
   const handleCommentClick = (e) => {
     e.stopPropagation();
     setShowComments(!showComments);
-  };
-
-  const handleConnect = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/v1/friends/send`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            sender_id: localStorage.getItem("user_id"),
-            receiver_id: id,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log(errorData);
-        throw new Error("error occurred");
-      }
-      const responseData = response.json();
-      console.log(responseData);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -108,12 +80,9 @@ export const SuggestionCard = ({
             >
               <LuHeart size={20} className={isLiked ? "fill-rose-500 " : ""} />
             </button>
-            <button
-              onClick={handleConnect}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-slate-600 text-white hover:bg-rose-600 transition-colors"
-            >
-              <LuUserPlus size={18} className="mr-1" />
-              <span>Connect</span>
+            <button className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-slate-600 text-white hover:bg-rose-600 transition-colors ">
+              <span>visit Profile</span>
+              <CiLocationArrow1 />
             </button>
           </div>
 
