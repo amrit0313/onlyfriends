@@ -32,6 +32,34 @@ const Profile = () => {
   if (!user) {
     return <div>user? not found</div>;
   }
+  const handleConnect = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/v1/friends/send`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            sender_id: localStorage.getItem("user_id"),
+            receiver_id: user?.user_id,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        throw new Error("error occurred");
+      }
+      const responseData = response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getProfilePicUrl = (path) => {
     return `${import.meta.env.VITE_API_URL}/${path}`;
@@ -46,7 +74,7 @@ const Profile = () => {
               <img
                 src={cover}
                 alt={user?.name}
-                className="w-full border-4 border-white object-cover"
+                className="w-full rounded-xl border-4 border-white object-cover"
               />
             </div>
             <div className="relative px-6 pb-6">
@@ -100,7 +128,7 @@ const Profile = () => {
                     <div className="text-sm text-gray-500">Messages</div>
                   </div>
                 </div> */}
-                {/* <div>
+                <div>
                   <h2 className="font-semibold text-gray-900 mb-2">
                     Interests
                   </h2>
@@ -114,7 +142,7 @@ const Profile = () => {
                       </span>
                     ))}
                   </div>
-                </div> */}
+                </div>
                 <div>
                   <h2 className="font-semibold text-gray-900 mb-2">About</h2>
                   <p className="text-gray-600">{user?.bio}</p>
