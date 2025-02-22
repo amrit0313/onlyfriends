@@ -133,7 +133,7 @@ const Profile = () => {
                     Interests
                   </h2>
                   <div className="flex flex-wrap gap-2">
-                    {user?.interests.map((interest, index) => (
+                    {user?.interests[0].split(",").map((interest, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 rounded-full text-sm bg-rose-50 text-rose-500"
