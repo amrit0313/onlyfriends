@@ -1,6 +1,7 @@
 import { LuSearch as SearchIcon } from "react-icons/lu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SuggestionCard } from "../../components/SuggestionCard";
+import download from "../../assets/download.png";
 
 // Mock data for demonstration
 const allUsers = [
@@ -15,25 +16,15 @@ const allUsers = [
     ],
     matchPercentage: 95,
   },
-  {
-    id: 2,
-    name: "Michael Chen",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-    interests: [
-      { id: 4, name: "Music" },
-      { id: 5, name: "Gaming" },
-      { id: 6, name: "Tech" },
-    ],
-    matchPercentage: 88,
-  },
-  // ... Add more mock users
 ];
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedInterest, setSelectedInterest] = useState("");
-
-  const filteredUsers = allUsers.filter((user) => {
+  const [data, setData] = useState([]);
+  const token = localStorage.getItem("access_token");
+  const user_id = localStorage.getItem("user_id");
+  const filteredUsers = allUsers?.filter((user) => {
     const matchesSearch = user.name
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
@@ -49,6 +40,57 @@ const Search = () => {
   const allInterests = Array.from(
     new Set(allUsers.flatMap((user) => user.interests.map((i) => i.name)))
   );
+
+  useEffect(() => {
+    const postData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/v1/similarity/compute`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.log("Error:", errorText);
+          throw new Error("Error fetching posts");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/v1/similarity/${user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.log("Error:", errorText);
+          throw new Error("Error fetching posts");
+        }
+        const responseData = await response.json();
+        setData(responseData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    postData();
+    fetchData();
+  }, []);
+
+  const getProfilePicUrl = (path) => {
+    return `${import.meta.env.VITE_API_URL}/${path}`;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-l from-indigo-200/50 overflow-scroll">
@@ -85,14 +127,16 @@ const Search = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredUsers.map((user) => (
+            {[
+              ...new Map(data?.map((user) => [user.user_id, user])).values(),
+            ].map((user) => (
               <SuggestionCard
-                key={user.id}
-                id={user.id}
-                name={user.name}
-                image={user.image}
+                key={user.user_id}
+                id={user.user_id}
+                name={user.username}
+                image={getProfilePicUrl(user.profile_pic)}
                 interests={user.interests}
-                matchPercentage={user.matchPercentage}
+                matchPercentage={user.similarity_score}
               />
             ))}
           </div>

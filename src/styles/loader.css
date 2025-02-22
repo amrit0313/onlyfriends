@@ -8,8 +8,6 @@
     conic-gradient(#0000 30%, #101755);
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
   animation: l13 1s infinite linear;
-  position: absolute;
-  left: 20;
 }
 @keyframes l13 {
   100% {
