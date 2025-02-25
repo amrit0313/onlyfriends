@@ -1,51 +1,50 @@
 import { useEffect, useState } from "react";
 import { LuHeart } from "react-icons/lu";
-import { useSelector } from "react-redux";
 
 const Posts = ({ refetch }) => {
   const [likedPosts, setLikedPosts] = useState({});
   const token = localStorage.getItem("access_token");
   const [data, setData] = useState([]);
+  const [likesUpdated, setLikesUpdated] = useState(false);
+  const [votedPosts, setVotedPosts] = useState([]);
 
   const handleLike = async (id) => {
     setLikedPosts((prev) => {
-      const updatedLikes = {
-        ...prev,
-        [id]: !prev[id],
-      };
-      return updatedLikes;
+      const isLiked = !prev[id];
+      sendVoteRequest(id, isLiked);
+      return { ...prev, [id]: isLiked };
     });
+  };
+
+  const sendVoteRequest = async (id, isLiked) => {
+    const votingAction = isLiked ? "vote" : "unvote";
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/v1/posts/vote`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/v1/posts/vote?post_id=${id}&action=${votingAction}`,
         {
           method: "POST",
-          body: JSON.stringify({
-            post_id: likedPosts.id,
-            username: localStorage.getItem("username"),
-          }),
           headers: {
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log("Error:", errorText);
-        throw new Error("Error fetching posts");
+
+      if (response.status === 204) {
+        setLikesUpdated((prev) => !prev);
+        return;
       }
-      const responseData = await response.json();
-      setData(responseData);
     } catch (error) {
-      console.log(error);
+      console.log("Error:", error);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
+        const response1 = await fetch(
           `${import.meta.env.VITE_API_URL}/v1/posts/feed`,
           {
             headers: {
@@ -53,20 +52,41 @@ const Posts = ({ refetch }) => {
             },
           }
         );
-        if (!response.ok) {
-          const errorText = await response.text();
+        if (!response1.ok) {
+          const errorText = await response1.text();
           console.log("Error:", errorText);
-          throw new Error("Error fetching posts");
+          throw new Error("Error fetching posts feed");
         }
-        const responseData = await response.json();
-        console.log(responseData);
+        const responseData = await response1.json();
         setData(responseData);
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        const response2 = await fetch(
+          `${import.meta.env.VITE_API_URL}/v1/posts/voted`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response2.ok) {
+          const errorText = await response2.text();
+          console.log("Error:", errorText);
+          throw new Error("Error fetching voted posts");
+        }
+        const result2 = await response2.json();
+        setVotedPosts(result2);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, [refetch]);
+  }, [refetch, likesUpdated]);
 
   return (
     <>
@@ -82,14 +102,16 @@ const Posts = ({ refetch }) => {
                 <button
                   onClick={() => handleLike(item.id)}
                   className={`inline-flex item-center justify-center rounded-full p-2 transition-all duration-300 ${
-                    likedPosts[item.id]
+                    votedPosts.includes(item)
                       ? "bg-rose-50"
                       : "text-gray-500 hover:bg-slate-200 hover:scale-x-110 hover:text-slate-400"
                   }`}
                 >
                   <LuHeart
                     size={25}
-                    className={likedPosts[item.id] ? "fill-blue-900" : ""}
+                    className={
+                      votedPosts.id?.includes(item.id) ? "fill-blue-900" : ""
+                    }
                   />
                 </button>
                 <p>{item.votes_count}</p>

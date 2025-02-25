@@ -1,36 +1,50 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PiSignOutFill } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import Posts from "../store/posts";
 import "../../styles/tooltip.css";
 import download from "../../assets/download.png";
+import { ToastContainer, toast } from "react-toastify";
+
 const Home = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
   const token = localStorage.getItem("access_token");
   const [postUpdated, setPostsUpdated] = useState(false);
   const [user, setUser] = useState(null);
+  const [friends, setFriends] = useState([]);
+  const [show, setShow] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/v1/profile/myprofile`,
-          {
+        const [response1, response2] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/v1/profile/myprofile`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
-        if (!response.ok) {
-          const errorData = await response.json();
+          }),
+          fetch(`${import.meta.env.VITE_API_URL}/v1/friends/friends`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+        if (!response1.ok || !response2.ok) {
+          const errorData = await response1.json();
           console.log("Error:", errorData);
           throw new Error("Error");
         }
-        const responseData = await response.json();
-        setUser(responseData.profile_pic);
+        const result1 = await response1.json();
+        const result2 = await response2.json();
+
+        setUser(result1.profile_pic);
+        setFriends(result2);
+        console.log(result2);
       } catch (error) {
         console.log(error);
       }
@@ -40,7 +54,11 @@ const Home = () => {
   }, []);
   const postHandler = async (e) => {
     e.preventDefault();
-    console.log("funcction");
+    if (!post) {
+      toast.warn("write something to post");
+      setShow(true);
+      return;
+    }
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/posts`, {
         method: "POST",
@@ -58,7 +76,6 @@ const Home = () => {
         throw new Error("Error");
       }
       const responseData = await response.json();
-      console.log(responseData);
       setPost("");
       setPostsUpdated((prev) => !prev);
     } catch (error) {
@@ -87,7 +104,7 @@ const Home = () => {
                 <img
                   className="rounded-full h-[5rem] lg:h-[6rem] aspect-square m-2 "
                   src={user ? getProfilePicUrl(user) : download}
-                  alt="image is displaying...."
+                  alt="error"
                 />
               </button>
             </div>
@@ -131,11 +148,34 @@ const Home = () => {
           <Posts refetch={postUpdated} />
         </div>
       </div>
-      <div className="hidden lg:flex flex-col items-start  h-screen w-1/4 bg-slate-200">
-        <h1 className="flex justify-center p-5 font-bold text-2xl  w-full text-slate-800">
-          Filters
+      <div className="hidden lg:flex flex-col items-start  h-screen w-1/4 bg-slate-200 z-[1]">
+        <h1 className="flex justify-center p-5 font-bold text-2xl  w-full text-black">
+          Friends
         </h1>
+        {friends?.map((user) => (
+          <div
+            key={user.user_id}
+            className="w-full font-extrabold font-sans border-t-2 "
+          >
+            <Link
+              to={`/people/${user.username}`}
+              className="flex pl-10 justify-start items-center w-full border-b-2 border-white py-5 text-slate-800 "
+            >
+              <img
+                className="rounded-full h-[2rem] aspect-square m-2 "
+                src={
+                  user?.profile_pic
+                    ? getProfilePicUrl(user.profile_pic)
+                    : download
+                }
+                alt="error"
+              />
+              <p>{user?.fullname}</p>
+            </Link>
+          </div>
+        ))}
       </div>
+      {show && <ToastContainer />}
     </div>
   );
 };

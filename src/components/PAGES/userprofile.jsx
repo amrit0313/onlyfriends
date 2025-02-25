@@ -156,7 +156,9 @@ const UserProfile = () => {
           </div>
         </div>
       </main>
-      {openEditModal && <ProfileEditModal close={editHandler} />}
+      {openEditModal && (
+        <ProfileEditModal update={setProfileData} close={editHandler} />
+      )}
     </div>
   );
 };

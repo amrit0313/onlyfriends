@@ -20,7 +20,6 @@ const Profile = () => {
           throw new Error("error occurred");
         }
         const responseData = await response.json();
-        console.log(responseData);
         setuser(responseData);
       } catch (error) {
         console.log(error);
@@ -73,7 +72,7 @@ const Profile = () => {
             <div className="relative h-48">
               <img
                 src={cover}
-                alt={user?.name}
+                alt={username}
                 className="w-full rounded-xl border-4 border-white object-cover"
               />
             </div>
@@ -93,12 +92,15 @@ const Profile = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                      {user?.name}
+                      {username}
                     </h1>
                     <p className="text-gray-500">{user?.location}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-rose-500 text-white hover:bg-rose-600 transition-colors">
+                    <button
+                      onClick={handleConnect}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-rose-500 text-white hover:bg-rose-600 transition-colors"
+                    >
                       <BiUserPlus size={18} className="mr-1" />
                       <span>Connect</span>
                     </button>
@@ -108,41 +110,7 @@ const Profile = () => {
                     </button>
                   </div>
                 </div>
-                {/* <div className="flex gap-4">
-                  <div className="text-center">
-                    <div className="text-xl font-semibold text-gray-900">
-                      {user?.connections}
-                    </div>
-                    <div className="text-sm text-gray-500">Connections</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-semibold text-gray-900">
-                      {user?.likes}
-                    </div>
-                    <div className="text-sm text-gray-500">Likes</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-semibold text-gray-900">
-                      {user?.messages}
-                    </div>
-                    <div className="text-sm text-gray-500">Messages</div>
-                  </div>
-                </div> */}
-                <div>
-                  <h2 className="font-semibold text-gray-900 mb-2">
-                    Interests
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {user?.interests[0].split(",").map((interest, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 rounded-full text-sm bg-rose-50 text-rose-500"
-                      >
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+
                 <div>
                   <h2 className="font-semibold text-gray-900 mb-2">About</h2>
                   <p className="text-gray-600">{user?.bio}</p>
