@@ -1,16 +1,19 @@
 import { useState } from "react";
 import Modal from "../LAYOUT/modal";
+import { ToastContainer, toast } from "react-toastify";
 
-const ProfileEditModal = ({ close }) => {
+const ProfileEditModal = ({ close, update }) => {
   const token = localStorage.getItem("access_token");
   const [profilePic, setProfilePic] = useState(null);
   const [bio, setBio] = useState("");
   const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [location, setLocation] = useState("");
+  const [show, setShow] = useState(false);
 
   const handleUpload = async (e) => {
     e.preventDefault();
+    setShow(true);
     const formData = new FormData();
     formData.append("bio", bio);
     formData.append("profile_pic", profilePic);
@@ -30,15 +33,23 @@ const ProfileEditModal = ({ close }) => {
         }
       );
       if (!response.ok) {
-        const errorData = await response.json();
-        console.log("Error:", errorData);
+        setError(true);
         throw new Error("Error");
       }
       const responseData = await response.json();
+      toast("Updated successfully");
       console.log("response", responseData);
-      close;
+      update({
+        date_of_birth: responseData.date_of_birth || "",
+        gender: responseData.gender || "",
+        bio: responseData.bio || "",
+        profile_pic: responseData.profile_pic || null,
+        location: responseData.location || "",
+      });
+      close();
     } catch (error) {
       console.log("Error:", error);
+      toast("fields can't be left empty");
     }
   };
 
@@ -75,8 +86,8 @@ const ProfileEditModal = ({ close }) => {
               width="200"
             />
           )}
-          <div className="flex justify-around items-center mt-5">
-            <div className="flex flex-col mr-5 md:mr-10">
+          <div className="flex justify-around items-center mt-5 object-cover">
+            <div className="flex flex-col mr-1 sm:5 md:mr-10">
               <label htmlFor="gender">Enter your gender</label>
               <select
                 className="mb-5 px-2 py-2 border-2 border-slate-500 rounded-lg"
@@ -119,6 +130,7 @@ const ProfileEditModal = ({ close }) => {
           >
             Upload Profile
           </button>
+          {show && <ToastContainer />}
         </div>
       </div>
     </Modal>

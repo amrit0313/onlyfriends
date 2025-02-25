@@ -1,123 +1,107 @@
-import { useParams } from "react-router-dom";
-import { FaUserPlus } from "react-icons/fa";
-import { FiMessageCircle } from "react-icons/fi";
+import { LuSearch as SearchIcon } from "react-icons/lu";
+import { useState, useEffect } from "react";
+import { RequestCard } from "../store/friendreqs";
+const allUsers = [];
 
-// Mock user data - in a real app, this would come from an API
-const mockUsers = {
-  1: {
-    name: "Sarah Parker",
-    location: "New York, USA",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-    coverImage: "https://images.unsplash.com/photo-1504805572947-34fad45aed93",
-    connections: 246,
-    likes: 52,
-    messages: 28,
-    interests: ["Photography", "Travel", "Art", "Music", "Fashion"],
-    about:
-      "Professional photographer and digital artist based in New York. Love capturing moments and creating beautiful visual stories.",
-  },
-  2: {
-    name: "Michael Chen",
-    location: "San Francisco, USA",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-    coverImage: "https://images.unsplash.com/photo-1477346611705-65d1883cee1e",
-    connections: 189,
-    likes: 43,
-    messages: 15,
-    interests: ["Music", "Gaming", "Tech"],
-    about:
-      "Software engineer by day, musician by night. Always exploring new technologies and creating music.",
-  },
-};
+const Search = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedInterest, setSelectedInterest] = useState("");
+  const [data, setData] = useState([]);
+  const token = localStorage.getItem("access_token");
+  const user_id = localStorage.getItem("user_id");
 
-const Profile = () => {
-  const { userId } = useParams();
-  const user = mockUsers[userId];
+  const filteredUsers = allUsers?.filter((user) => {
+    const matchesSearch = user.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesInterest = selectedInterest
+      ? user.interests.some(
+          (interest) =>
+            interest.name.toLowerCase() === selectedInterest.toLowerCase()
+        )
+      : true;
+    return matchesSearch && matchesInterest;
+  });
 
-  if (!user) {
-    return <div>User not found</div>;
-  }
+  const allInterests = Array.from(
+    new Set(allUsers.flatMap((user) => user.interests.map((i) => i.name)))
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/v1/friends/requests`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.log("Error:", errorText);
+          throw new Error("Error fetching posts");
+        }
+        const responseData = await response.json();
+        setData(responseData.received_requests);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const getProfilePicUrl = (path) => {
+    return `${import.meta.env.VITE_API_URL}/${path}`;
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-l from-indigo-200/50">
-      <main className="md:ml-64 pb-16 md:pb-0">
-        <div className="max-w-3xl mx-auto px-4 py-8">
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="relative h-48">
-              <img
-                src={user.coverImage}
-                alt="Cover"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="relative px-6 pb-6">
-              <div className="relative -mt-16 mb-4">
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  className="w-32 h-32 rounded-full border-4 border-white object-cover"
+    <div className="min-h-screen bg-gradient-to-l from-indigo-200/50 overflow-scroll">
+      <main className=" pb-16 md:pb-0">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">Search Friends</h2>
+            <div className="mt-4 flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <SearchIcon
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by name..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 />
               </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {user.name}
-                    </h1>
-                    <p className="text-gray-500">{user.location}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-rose-500 text-white hover:bg-rose-600 transition-colors">
-                      <FaUserPlus size={18} className="mr-1" />
-                      <span>Connect</span>
-                    </button>
-                    <button className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors">
-                      <FiMessageCircle size={18} className="mr-1" />
-                      <span>Message</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="text-center">
-                    <div className="text-xl font-semibold text-gray-900">
-                      {user.connections}
-                    </div>
-                    <div className="text-sm text-gray-500">Connections</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-semibold text-gray-900">
-                      {user.likes}
-                    </div>
-                    <div className="text-sm text-gray-500">Likes</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-semibold text-gray-900">
-                      {user.messages}
-                    </div>
-                    <div className="text-sm text-gray-500">Messages</div>
-                  </div>
-                </div>
-                <div>
-                  <h2 className="font-semibold text-gray-900 mb-2">
-                    Interests
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {user.interests.map((interest, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 rounded-full text-sm bg-rose-50 text-rose-500"
-                      >
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h2 className="font-semibold text-gray-900 mb-2">About</h2>
-                  <p className="text-gray-600">{user.about}</p>
-                </div>
-              </div>
+              <select
+                value={selectedInterest}
+                onChange={(e) => setSelectedInterest(e.target.value)}
+                className="px-4 py-2 bg-gradient-to-bl from-indigo-200/50 to-white  rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent"
+              >
+                <option value="">All Interests</option>
+                {allInterests.map((interest) => (
+                  <option key={interest} value={interest}>
+                    {interest}
+                  </option>
+                ))}
+              </select>
             </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(Array.isArray(data) ? data : []).map((user, index) => (
+              <RequestCard
+                key={index}
+                id={user.request.sender_id}
+                name={user.sender_username}
+                image={getProfilePicUrl(user.sender_profile_pic)}
+                matchPercentage=""
+                connection="Visit Profile"
+              />
+            ))}
           </div>
         </div>
       </main>
@@ -125,4 +109,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Search;

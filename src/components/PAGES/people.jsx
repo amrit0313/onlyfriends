@@ -1,22 +1,7 @@
 import { LuSearch as SearchIcon } from "react-icons/lu";
 import { useState, useEffect } from "react";
-import { SuggestionCard } from "../../components/SuggestionCard";
+import { SuggestionCard } from "../store/SuggestionCard";
 import download from "../../assets/download.png";
-
-// Mock data for demonstration
-const allUsers = [
-  {
-    id: 1,
-    name: "Sarah Parker",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-    interests: [
-      { id: 1, name: "Photography" },
-      { id: 2, name: "Travel" },
-      { id: 3, name: "Art" },
-    ],
-    matchPercentage: 95,
-  },
-];
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,22 +9,29 @@ const Search = () => {
   const [data, setData] = useState([]);
   const token = localStorage.getItem("access_token");
   const user_id = localStorage.getItem("user_id");
-  const filteredUsers = allUsers?.filter((user) => {
-    const matchesSearch = user.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesInterest = selectedInterest
-      ? user.interests.some(
-          (interest) =>
-            interest.name.toLowerCase() === selectedInterest.toLowerCase()
-        )
-      : true;
-    return matchesSearch && matchesInterest;
-  });
 
   const allInterests = Array.from(
-    new Set(allUsers.flatMap((user) => user.interests.map((i) => i.name)))
+    new Set(
+      data?.flatMap((user) => user.interests.flatMap((i) => i.split(",")))
+    )
   );
+
+  const filteredUsers = data?.filter((user) => {
+    const matchesSearch = user.username
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const userInterests = user.interests.flatMap((i) => i.split(","));
+
+    const matchesInterest = selectedInterest
+      ? userInterests.some(
+          (interest) =>
+            interest.toLowerCase() === selectedInterest.toLowerCase()
+        )
+      : true;
+
+    return matchesSearch && matchesInterest;
+  });
 
   useEffect(() => {
     const postData = async () => {
@@ -128,15 +120,20 @@ const Search = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              ...new Map(data?.map((user) => [user.user_id, user])).values(),
-            ].map((user) => (
+              ...new Map(
+                (Array.isArray(filteredUsers) ? filteredUsers : []).map(
+                  (user) => [user.user_id, user]
+                )
+              ).values(),
+            ].map((user, index) => (
               <SuggestionCard
-                key={user.user_id}
+                key={index}
                 id={user.user_id}
                 name={user.username}
                 image={getProfilePicUrl(user.profile_pic)}
                 interests={user.interests}
                 matchPercentage={user.similarity_score}
+                connection="Visit Profile"
               />
             ))}
           </div>

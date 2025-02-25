@@ -38,7 +38,6 @@ const Interests = () => {
   const navigate = useNavigate();
 
   const submitHandler = async () => {
-    console.log("function called");
     console.log(selectedInterests.map((interest) => interest.name));
     try {
       const formData = new FormData();
@@ -61,7 +60,6 @@ const Interests = () => {
         throw new Error("Network response was not ok");
       }
       const responseData = await response.json();
-      console.log(responseData);
       navigate("/user");
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);

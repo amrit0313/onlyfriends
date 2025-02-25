@@ -7,14 +7,13 @@ import { authActions } from "../redux/authslice";
 import "../../styles/loader.css";
 import { ToastContainer, toast } from "react-toastify";
 
-const AuthPage = () => {
+const AuthPage = ({ setToken }) => {
   const [isRegistered, setIsRegistered] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
-  const token = localStorage.getItem("access_token");
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -69,6 +68,7 @@ const AuthPage = () => {
       }
       const responseData = await response.json();
       localStorage.setItem("access_token", responseData.access_token);
+      setToken(responseData.access_token);
       localStorage.setItem("username", responseData.username);
       localStorage.setItem("user_id", responseData.user_id);
       dispatch(authActions.loginSuccess());
