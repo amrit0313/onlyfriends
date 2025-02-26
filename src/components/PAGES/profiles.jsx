@@ -106,7 +106,9 @@ const Profile = () => {
                       <span>Connect</span>
                     </button>
                     <button
-                      onClick={() => navigate("/chat")}
+                      onClick={() =>
+                        navigate("/chat", { state: { userId: user?.user_id } })
+                      }
                       className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors"
                     >
                       <FiMessageCircle size={18} className="mr-1" />

@@ -13,14 +13,25 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { BsEmojiSmile } from "react-icons/bs";
 import download from "../../assets/download.png";
+import { useLocation } from "react-router-dom";
+import MessageSkeleton from "../store/messageskeleton";
 
 export default function ChatApp() {
+  const location = useLocation();
+  const stateData = location.state?.userId;
   const [users, setUsers] = useState([]);
-  const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const currentUserId = localStorage.getItem("user_id");
+  const [messagesLoading, setMessagesLoading] = useState(true);
+  const getChatId = (userId) => {
+    const ids = [currentUserId, userId].sort();
+    return `${ids[0]}_${ids[1]}`;
+  };
+  const [activeChat, setActiveChat] = useState(
+    stateData ? getChatId(stateData) : null
+  );
 
   // Fetch users (friends) list
   useEffect(() => {
@@ -36,7 +47,7 @@ export default function ChatApp() {
         );
         if (!res.ok) throw new Error("Failed to fetch users");
         const data = await res.json();
-        setUsers(data);
+        setUsers(() => data);
       } catch (err) {
         console.error("Error fetching users:", err);
       }
@@ -46,6 +57,8 @@ export default function ChatApp() {
 
   useEffect(() => {
     if (activeChat) {
+      setMessagesLoading(true);
+
       const messagesRef = collection(db, "chats", activeChat, "messages");
       const q = query(messagesRef, orderBy("timestamp"));
 
@@ -58,17 +71,14 @@ export default function ChatApp() {
             timestamp: data.timestamp?.toDate(),
           };
         });
+
         setMessages(msgs);
+        setMessagesLoading(false);
       });
 
       return () => unsubscribe();
     }
   }, [activeChat]);
-
-  const getChatId = (userId) => {
-    const ids = [currentUserId, userId].sort();
-    return `${ids[0]}_${ids[1]}`;
-  };
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -106,10 +116,10 @@ export default function ChatApp() {
           users
             .sort((a, b) => {
               const lastMessageA = messages
-                .filter((msg) => getChatId(a.user_id) === activeChat)
+                .filter(() => getChatId(a.user_id) === activeChat)
                 .sort((x, y) => y.timestamp - x.timestamp)[0];
               const lastMessageB = messages
-                .filter((msg) => getChatId(b.user_id) === activeChat)
+                .filter(() => getChatId(b.user_id) === activeChat)
                 .sort((x, y) => y.timestamp - x.timestamp)[0];
               return (
                 (lastMessageB?.timestamp || 0) - (lastMessageA?.timestamp || 0)
@@ -123,7 +133,10 @@ export default function ChatApp() {
                     ? "bg-slate-200"
                     : "hover:bg-gray-200"
                 }`}
-                onClick={() => setActiveChat(getChatId(user.user_id))}
+                onClick={() => {
+                  setActiveChat(getChatId(user.user_id));
+                  setMessages([]);
+                }}
               >
                 <img
                   className="rounded-full h-[2rem] aspect-square m-2"
@@ -167,18 +180,22 @@ export default function ChatApp() {
                     )
                 )}
               </div>
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`my-1 px-10 py-3 font-normal font-serif text-purple-950 rounded-lg w-fit max-w-[20rem] ${
-                    msg.sender === currentUserId
-                      ? "bg-rose-200/50 mr-5 self-end"
-                      : "bg-blue-100/50 ml-5 self-start"
-                  }`}
-                >
-                  {msg.text}
-                </div>
-              ))}
+              {messagesLoading ? (
+                <MessageSkeleton times={8} />
+              ) : (
+                messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`my-1 px-10 py-3 font-normal font-serif text-purple-950 rounded-lg w-fit max-w-[20rem] ${
+                      msg.sender === currentUserId
+                        ? "bg-rose-200/50 mr-5 self-end"
+                        : "bg-blue-100/50 ml-5 self-start"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                ))
+              )}
             </div>
 
             <form

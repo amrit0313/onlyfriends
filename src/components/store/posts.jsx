@@ -2,19 +2,15 @@ import { useEffect, useState } from "react";
 import { LuHeart } from "react-icons/lu";
 
 const Posts = ({ refetch }) => {
-  const [likedPosts, setLikedPosts] = useState({});
   const token = localStorage.getItem("access_token");
   const current_user = localStorage.getItem("username");
   const [data, setData] = useState([]);
-  const [likesUpdated, setLikesUpdated] = useState(false);
   const [votedPosts, setVotedPosts] = useState([]);
+  const [update, setUpdate] = useState(false);
 
   const handleLike = async (id) => {
-    setLikedPosts((prev) => {
-      const isLiked = !prev[id];
-      sendVoteRequest(id, isLiked);
-      return { ...prev, [id]: isLiked };
-    });
+    await sendVoteRequest(id);
+    setUpdate((prev) => !prev);
   };
 
   const sendVoteRequest = async (id) => {
@@ -30,8 +26,7 @@ const Posts = ({ refetch }) => {
           },
         }
       );
-
-      setLikesUpdated((prev) => !prev);
+      console.log("response", response);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -82,7 +77,7 @@ const Posts = ({ refetch }) => {
       }
     };
     fetchData();
-  }, [refetch, likedPosts]);
+  }, [refetch, update]);
 
   return (
     <>
