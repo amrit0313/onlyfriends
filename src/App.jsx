@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Navbar from "./components/LAYOUT/nav";
 import Home from "./components/LAYOUT/home";
@@ -13,13 +13,15 @@ import Interests from "./components/PAGES/interests";
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("access_token"));
 
+  useEffect(() => {
+    setToken(localStorage.getItem("access_token"));
+  }, []);
+
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      {token && (
-        <div className="flex-shrink-1">
-          <Navbar />
-        </div>
-      )}
+      <div className="flex-shrink-1">
+        <Navbar />
+      </div>
       <div className="flex-grow bg-slate-100 overflow-auto">
         <Routes>
           <Route

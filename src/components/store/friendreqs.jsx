@@ -1,20 +1,26 @@
-import { LuHeart, LuMessageCircle, LuUserPlus } from "react-icons/lu";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CiLocationArrow1 } from "react-icons/ci";
 import { MdNotInterested } from "react-icons/md";
 import { BiUserPlus } from "react-icons/bi";
 
-export const RequestCard = ({ id, name, image, matchPercentage }) => {
+export const RequestCard = ({
+  id,
+  name,
+  image,
+  matchPercentage,
+  getElements,
+}) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
 
-  const handleRequest = async (action, id) => {
+  const handleRequest = async (e, action, activeId) => {
+    e.preventDefault();
+
     try {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL
-        }/v1/friends/request/${id}?action=${action}`,
+        }/v1/friends/request/${activeId}?action=${action}`,
         {
           method: "PUT",
           headers: {
@@ -23,19 +29,16 @@ export const RequestCard = ({ id, name, image, matchPercentage }) => {
         }
       );
       if (!response.ok) {
-        const errorData = response.json();
+        const errorData = await response.json();
         console.log(errorData);
-        throw new error("Error occurred");
+        throw new Error("Error occurred");
       }
-      const responseData = response.json();
-      console.log(responseData);
-
-      if (response.status === 204) {
-        return;
-      }
+      const responseData = await response.json();
+      getElements(action);
     } catch (error) {
       console.log("Error:", error);
     }
+    return;
   };
 
   return (
@@ -67,20 +70,20 @@ export const RequestCard = ({ id, name, image, matchPercentage }) => {
               </span>
             ))} */}
           </div>
-          <div className="mt-4 flex justify-between items-center">
+          <div className="mt-4 flex justify-evenly items-center">
             <button
-              onClick={() => handleRequest("reject", id)}
+              onClick={(e) => handleRequest(e, "reject", id)}
               className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-slate-900 text-white hover:bg-slate-500 transition-colors "
             >
               <MdNotInterested />
-              <span>Delete request</span>
+              <span>Delete </span>
             </button>
             <button
-              onClick={() => handleRequest("accept", id)}
+              onClick={(e) => handleRequest(e, "accept", id)}
               className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-rose-500 hover:bg-rose-600 text-white  transition-colors "
             >
               <BiUserPlus />
-              <span>Accept Request</span>
+              <span>Accept</span>
             </button>
           </div>
         </div>

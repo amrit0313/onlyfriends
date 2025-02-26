@@ -38,7 +38,6 @@ const Interests = () => {
   const navigate = useNavigate();
 
   const submitHandler = async () => {
-    console.log(selectedInterests.map((interest) => interest.name));
     try {
       const formData = new FormData();
       formData.append(

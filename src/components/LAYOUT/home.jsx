@@ -44,7 +44,6 @@ const Home = () => {
 
         setUser(result1.profile_pic);
         setFriends(result2);
-        console.log(result2);
       } catch (error) {
         console.log(error);
       }

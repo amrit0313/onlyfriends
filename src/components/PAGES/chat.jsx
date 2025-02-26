@@ -12,6 +12,7 @@ import { CiLocationArrow1 } from "react-icons/ci";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { BsEmojiSmile } from "react-icons/bs";
+import download from "../../assets/download.png";
 
 export default function ChatApp() {
   const [users, setUsers] = useState([]);
@@ -43,7 +44,6 @@ export default function ChatApp() {
     fetchUsers();
   }, []);
 
-  // Fetch messages for active chat
   useEffect(() => {
     if (activeChat) {
       const messagesRef = collection(db, "chats", activeChat, "messages");
@@ -65,13 +65,11 @@ export default function ChatApp() {
     }
   }, [activeChat]);
 
-  // Generate chat ID between two users
   const getChatId = (userId) => {
     const ids = [currentUserId, userId].sort();
     return `${ids[0]}_${ids[1]}`;
   };
 
-  // Send a new message
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !activeChat) return;
@@ -89,10 +87,9 @@ export default function ChatApp() {
     }
   };
 
-  // Add emoji to message input
   const addEmoji = (emoji) => {
     setNewMessage((prev) => prev + emoji.native);
-    setShowEmojiPicker(false); // Hide picker after selecting an emoji
+    setShowEmojiPicker(false);
   };
 
   const getProfilePicUrl = (path) => {
@@ -101,43 +98,75 @@ export default function ChatApp() {
 
   return (
     <div className="flex h-screen bg-gradient-to-r from-slate-100 to-slate-300 pb-20 md:pb-0">
-      {/* Users List */}
       <div className="hidden md:block w-1/4 p-4 bg-white shadow-md overflow-auto">
         <h2 className="text-lg font-semibold mb-4">Chats</h2>
         {users.length === 0 ? (
           <p>Loading users...</p>
         ) : (
-          users.map((user) => (
-            <div
-              key={user.id}
-              className={`flex justify-start items-center gap-2 p-3 border-b-2 border-gray-200 mb-1 cursor-pointer font-medium pl-10 ${
-                activeChat === getChatId(user.user_id)
-                  ? "bg-slate-200"
-                  : "hover:bg-gray-200"
-              }`}
-              onClick={() => setActiveChat(getChatId(user.user_id))}
-            >
-              <img
-                className="rounded-full h-[2rem] aspect-square m-2"
-                src={
-                  user?.profile_pic
-                    ? getProfilePicUrl(user.profile_pic)
-                    : "/default-avatar.png"
-                }
-                alt="Profile"
-              />
-              <p>{user.username}</p>
-            </div>
-          ))
+          users
+            .sort((a, b) => {
+              const lastMessageA = messages
+                .filter((msg) => getChatId(a.user_id) === activeChat)
+                .sort((x, y) => y.timestamp - x.timestamp)[0];
+              const lastMessageB = messages
+                .filter((msg) => getChatId(b.user_id) === activeChat)
+                .sort((x, y) => y.timestamp - x.timestamp)[0];
+              return (
+                (lastMessageB?.timestamp || 0) - (lastMessageA?.timestamp || 0)
+              );
+            })
+            .map((user, index) => (
+              <div
+                key={index}
+                className={`flex justify-start items-center gap-2 p-3 border-b-2 border-gray-200 mb-1 cursor-pointer font-medium pl-10 ${
+                  activeChat === getChatId(user.user_id)
+                    ? "bg-slate-200"
+                    : "hover:bg-gray-200"
+                }`}
+                onClick={() => setActiveChat(getChatId(user.user_id))}
+              >
+                <img
+                  className="rounded-full h-[2rem] aspect-square m-2"
+                  src={
+                    user?.profile_pic
+                      ? getProfilePicUrl(user.profile_pic)
+                      : download
+                  }
+                  alt="Profile"
+                />
+                <p>{user.username}</p>
+              </div>
+            ))
         )}
       </div>
 
-      {/* Chat Window */}
       <div className="flex-1 flex flex-col">
         {activeChat ? (
           <div className="flex flex-col h-full p-4">
-            {/* Messages */}
             <div className="flex flex-col flex-1 overflow-auto bg-white p-2 shadow-lg shadow-slate-900">
+              <div className="flex mb-2 border-b-2 border-indigo-100">
+                {users.map(
+                  (user) =>
+                    activeChat === getChatId(user.user_id) && (
+                      <div
+                        className="flex  items-center gap-3"
+                        key={user.user_id}
+                      >
+                        <img
+                          key={user.user_id}
+                          className="rounded-full h-[2rem] aspect-square m-2"
+                          src={
+                            user?.profile_pic
+                              ? getProfilePicUrl(user.profile_pic)
+                              : download
+                          }
+                          alt="Profile"
+                        />
+                        <p>{user.fullname}</p>
+                      </div>
+                    )
+                )}
+              </div>
               {messages.map((msg) => (
                 <div
                   key={msg.id}
@@ -152,7 +181,6 @@ export default function ChatApp() {
               ))}
             </div>
 
-            {/* Message Input & Emoji Picker */}
             <form
               onSubmit={sendMessage}
               className="p-2 flex gap-2 bg-white shadow-md relative"

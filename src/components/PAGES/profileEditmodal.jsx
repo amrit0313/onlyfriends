@@ -38,7 +38,6 @@ const ProfileEditModal = ({ close, update }) => {
       }
       const responseData = await response.json();
       toast("Updated successfully");
-      console.log("response", responseData);
       update({
         date_of_birth: responseData.date_of_birth || "",
         gender: responseData.gender || "",

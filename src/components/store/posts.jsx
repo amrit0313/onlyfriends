@@ -4,6 +4,7 @@ import { LuHeart } from "react-icons/lu";
 const Posts = ({ refetch }) => {
   const [likedPosts, setLikedPosts] = useState({});
   const token = localStorage.getItem("access_token");
+  const current_user = localStorage.getItem("username");
   const [data, setData] = useState([]);
   const [likesUpdated, setLikesUpdated] = useState(false);
   const [votedPosts, setVotedPosts] = useState([]);
@@ -16,14 +17,12 @@ const Posts = ({ refetch }) => {
     });
   };
 
-  const sendVoteRequest = async (id, isLiked) => {
-    const votingAction = isLiked ? "vote" : "unvote";
-
+  const sendVoteRequest = async (id) => {
     try {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL
-        }/v1/posts/vote?post_id=${id}&action=${votingAction}`,
+        }/v1/posts/vote?post_id=${id}&=${current_user}`,
         {
           method: "POST",
           headers: {
@@ -32,10 +31,7 @@ const Posts = ({ refetch }) => {
         }
       );
 
-      if (response.status === 204) {
-        setLikesUpdated((prev) => !prev);
-        return;
-      }
+      setLikesUpdated((prev) => !prev);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -86,7 +82,7 @@ const Posts = ({ refetch }) => {
       }
     };
     fetchData();
-  }, [refetch, likesUpdated]);
+  }, [refetch, likedPosts]);
 
   return (
     <>
@@ -102,7 +98,7 @@ const Posts = ({ refetch }) => {
                 <button
                   onClick={() => handleLike(item.id)}
                   className={`inline-flex item-center justify-center rounded-full p-2 transition-all duration-300 ${
-                    votedPosts.includes(item)
+                    votedPosts.some((vote) => vote.id === item.id)
                       ? "bg-rose-50"
                       : "text-gray-500 hover:bg-slate-200 hover:scale-x-110 hover:text-slate-400"
                   }`}
@@ -110,11 +106,13 @@ const Posts = ({ refetch }) => {
                   <LuHeart
                     size={25}
                     className={
-                      votedPosts.id?.includes(item.id) ? "fill-blue-900" : ""
+                      votedPosts.some((vote) => vote.id === item.id)
+                        ? "fill-blue-900"
+                        : ""
                     }
                   />
                 </button>
-                <p>{item.votes_count}</p>
+                <p>{item?.votes_count}</p>
               </div>
               <p className="relative left-10 bottom-0 translate-y-3">
                 {new Date(item.created_at).toLocaleDateString()}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BiUserPlus } from "react-icons/bi";
 import { FiMessageCircle } from "react-icons/fi";
 import download from "../../assets/download.png";
@@ -8,6 +8,7 @@ import cover from "../../assets/coverImage.svg";
 const Profile = () => {
   const { username } = useParams();
   const [user, setuser] = useState({});
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -104,7 +105,10 @@ const Profile = () => {
                       <BiUserPlus size={18} className="mr-1" />
                       <span>Connect</span>
                     </button>
-                    <button className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors">
+                    <button
+                      onClick={() => navigate("/chat")}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
                       <FiMessageCircle size={18} className="mr-1" />
                       <span>Message</span>
                     </button>

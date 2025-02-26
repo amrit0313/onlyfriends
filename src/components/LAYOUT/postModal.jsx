@@ -8,8 +8,6 @@ const PostModal = ({ close }) => {
     if (!post) {
       return;
     }
-    console.log(token);
-    console.log(post);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/posts`, {
         method: "POST",
@@ -27,7 +25,6 @@ const PostModal = ({ close }) => {
         throw new Error("Error");
       }
       const responseData = await response.json();
-      console.log("response", responseData);
       setPost("");
       setPostsUpdated((prev) => !prev);
     } catch (error) {

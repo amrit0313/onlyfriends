@@ -50,6 +50,7 @@ const Search = () => {
           console.log("Error:", errorText);
           throw new Error("Error fetching posts");
         }
+        const responseData = response.json();
       } catch (error) {
         console.log(error);
       }
@@ -85,61 +86,71 @@ const Search = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-l from-indigo-200/50 overflow-scroll">
-      <main className=" pb-16 md:pb-0">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Search Friends</h2>
-            <div className="mt-4 flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <SearchIcon
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Search by name..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                />
+    <>
+      {token ? (
+        <div className="min-h-screen bg-gradient-to-l from-indigo-200/50 overflow-scroll">
+          <main className=" pb-16 md:pb-0">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Search People
+                </h2>
+                <div className="mt-4 flex flex-col sm:flex-row gap-4">
+                  <div className="relative flex-1">
+                    <SearchIcon
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={20}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Search by name..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    />
+                  </div>
+                  <select
+                    value={selectedInterest}
+                    onChange={(e) => setSelectedInterest(e.target.value)}
+                    className="px-4 py-2 bg-gradient-to-bl from-indigo-200/50 to-white  rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent"
+                  >
+                    <option value="">All Interests</option>
+                    {allInterests.map((interest) => (
+                      <option key={interest} value={interest}>
+                        {interest}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <select
-                value={selectedInterest}
-                onChange={(e) => setSelectedInterest(e.target.value)}
-                className="px-4 py-2 bg-gradient-to-bl from-indigo-200/50 to-white  rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent"
-              >
-                <option value="">All Interests</option>
-                {allInterests.map((interest) => (
-                  <option key={interest} value={interest}>
-                    {interest}
-                  </option>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  ...new Map(
+                    (Array.isArray(filteredUsers) ? filteredUsers : []).map(
+                      (user) => [user.user_id, user]
+                    )
+                  ).values(),
+                ].map((user, index) => (
+                  <SuggestionCard
+                    key={index}
+                    id={user.user_id}
+                    name={user.username}
+                    image={getProfilePicUrl(user.profile_pic)}
+                    interests={user.interests}
+                    matchPercentage={user.similarity_score}
+                    connection="Visit Profile"
+                  />
                 ))}
-              </select>
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              ...new Map(
-                (Array.isArray(filteredUsers) ? filteredUsers : []).map(
-                  (user) => [user.user_id, user]
-                )
-              ).values(),
-            ].map((user, index) => (
-              <SuggestionCard
-                key={index}
-                id={user.user_id}
-                name={user.username}
-                image={getProfilePicUrl(user.profile_pic)}
-                interests={user.interests}
-                matchPercentage={user.similarity_score}
-                connection="Visit Profile"
-              />
-            ))}
-          </div>
+          </main>
         </div>
-      </main>
-    </div>
+      ) : (
+        <div className="h-screen flex justify-center items-center font-extrabold text-slate-600 font-mono ">
+          <h1>Login to surf</h1>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-const Navbar = () => {
+const Navbar = ({ onLogout }) => {
   const [isCollasped, setIsCollasped] = useState(false);
   const token = localStorage.getItem("access_token");
   const navlinks = [
