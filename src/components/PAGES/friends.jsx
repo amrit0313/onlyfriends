@@ -11,7 +11,7 @@ const Search = () => {
   const [data, setData] = useState([]);
   const token = localStorage.getItem("access_token");
   const [render, setRender] = useState(false);
-
+  const [requestType, setRequestType] = useState("")
   const allInterests = Array.from(
     new Set(
       data?.flatMap((user) =>
@@ -87,7 +87,7 @@ const Search = () => {
                   Search Friends
                 </h2>
                 <div className="mt-4 flex flex-col sm:flex-row gap-4">
-                  <div className="relative flex-1">
+                  <div className="relative flex flex-1 flex-col gap-4">
                     <SearchIcon
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                       size={20}
@@ -100,6 +100,15 @@ const Search = () => {
                       className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                     />
                   </div>
+
+                  <select
+                    value={selectedInterest}
+                    onChange={(e) => setSelectedInterest(e.target.value)}
+                    className="px-4 py-2 bg-gradient-to-bl from-indigo-200/50 to-white  rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent"
+                  >
+                    <option value="received">Received Requests</option>
+                    <option value="sent">Sent Requests</option>
+                  </select>
                   <select
                     value={selectedInterest}
                     onChange={(e) => setSelectedInterest(e.target.value)}

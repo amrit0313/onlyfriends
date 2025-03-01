@@ -163,7 +163,7 @@ export default function ChatApp() {
   };
 
   return (
-    <div className="flex h-screen bg-white pb-14 md:pb-0">
+    <div className="flex h-screen bg-white pb-14 lg:pb-0">
       <div className="hidden md:block w-1/4 p-4 bg-white shadow-lg shadow-slate-800 overflow-auto">
         <h2 className="text-lg font-semibold mb-4">Chats</h2>
         {users.length === 0 ? (
@@ -223,10 +223,12 @@ export default function ChatApp() {
                 {users.map(
                   (user, index) =>
                     activeChat === getChatId(user.user_id) && (
-                      <div className="flex justify-between px-5 py-3 w-full">
-                        <div className="flex  items-center gap-3" key={index}>
+                      <div
+                        className="flex justify-between px-5 py-3 w-full"
+                        key={index}
+                      >
+                        <div className="flex  items-center gap-3">
                           <img
-                            key={index}
                             className="rounded-full h-[2rem] aspect-square m-2"
                             src={
                               user?.profile_pic

@@ -86,8 +86,8 @@ const AuthPage = ({ setToken }) => {
   return (
     <div className="flex h-screen items-center  justify-center bg-[url('/of_bgg.png')] bg-cover">
       <form onSubmit={handleSubmit}>
-        <fieldset className="flex flex-col  md:bg-gradient-to-r from-slate-400  to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit min-h-fit  text-slate-800 md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
-          <legend className="text-xl text-gray-800/50">
+        <fieldset className="flex flex-col bg-slate-300   md:bg-gradient-to-tr from-slate-400  to-slate-600 shadow-lg shadow-slate-950/50 border-[1px] border-slate-400 md:px-[8rem] py-[1rem] px-[1.5rem] min-w-fit min-h-fit  text-slate-800 md:w-auto w-9/10  font-extrabold md:rounded-tr-[3rem] rounded-xl">
+          <legend className="text-xl text-gray-800">
             {isRegistered ? "Login" : "Register"}
           </legend>
           {!isRegistered && (

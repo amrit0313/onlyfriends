@@ -122,7 +122,7 @@ const RequestProfile = () => {
                         </button>
                         <button
                           onClick={(e) => handleRequest(e, "accept", id)}
-                          className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-rose-500 hover:bg-rose-600 active:bg-white text-black text-white  transition-colors "
+                          className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-rose-500 hover:bg-rose-600 active:bg-white  text-white  transition-colors "
                         >
                           <BiUserPlus />
                           <span>Accept</span>
