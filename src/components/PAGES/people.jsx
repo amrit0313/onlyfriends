@@ -50,7 +50,6 @@ const Search = () => {
           console.log("Error:", errorText);
           throw new Error("Error fetching posts");
         }
-        const responseData = response.json();
       } catch (error) {
         console.log(error);
       }
@@ -124,23 +123,21 @@ const Search = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  ...new Map(
-                    (Array.isArray(filteredUsers) ? filteredUsers : []).map(
-                      (user) => [user.user_id, user]
+                {(Array.isArray(filteredUsers) ? filteredUsers : []).map(
+                  (user, index) =>
+                    user.is_active && (
+                      <SuggestionCard
+                        key={index}
+                        id={user.user_id}
+                        name={user.username}
+                        image={getProfilePicUrl(user.profile_pic)}
+                        interests={user.interests}
+                        matchPercentage={user.similarity_score}
+                        connection="Visit Profile"
+                        isActive={user.is_active}
+                      />
                     )
-                  ).values(),
-                ].map((user, index) => (
-                  <SuggestionCard
-                    key={index}
-                    id={user.user_id}
-                    name={user.username}
-                    image={getProfilePicUrl(user.profile_pic)}
-                    interests={user.interests}
-                    matchPercentage={user.similarity_score}
-                    connection="Visit Profile"
-                  />
-                ))}
+                )}
               </div>
             </div>
           </main>

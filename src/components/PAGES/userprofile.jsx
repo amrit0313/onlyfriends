@@ -112,7 +112,7 @@ const UserProfile = () => {
                   </h1>
                   <p className="text-gray-500">{profileData.location}</p>
                 </div>
-                <div className="flex gap-4">
+                {/* <div className="flex gap-4">
                   <div className="text-center">
                     <div className="text-xl font-semibold text-gray-900">
                       246
@@ -131,7 +131,7 @@ const UserProfile = () => {
                     </div>
                     <div className="text-sm text-gray-500">Messages</div>
                   </div>
-                </div>
+                </div> */}
                 <div>
                   <h2 className="font-semibold text-gray-900 mb-2">
                     Interests

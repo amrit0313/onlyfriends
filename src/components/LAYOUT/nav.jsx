@@ -92,7 +92,7 @@ const Navbar = ({ onLogout }) => {
           <NavLink
             key={index}
             to={link.to}
-            className="h-20 width-10 p-5 w-full hover:bg-slate-300 "
+            className="h-auto width-10 p-5 w-full hover:bg-slate-300 "
           >
             {link.icon}
           </NavLink>

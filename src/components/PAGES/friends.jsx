@@ -13,8 +13,29 @@ const Search = () => {
   const [render, setRender] = useState(false);
 
   const allInterests = Array.from(
-    new Set(allUsers.flatMap((user) => user.interests.map((i) => i.name)))
+    new Set(
+      data?.flatMap((user) =>
+        user.sender_interests.flatMap((i) => i.split(","))
+      )
+    )
   );
+
+  const filteredFriends = data?.filter((user) => {
+    const matchesSearch = user.sender_username
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const userInterests = user.sender_interests.flatMap((i) => i.split(","));
+
+    const matchesInterest = selectedInterest
+      ? userInterests.some(
+          (interest) =>
+            interest.toLowerCase() === selectedInterest.toLowerCase()
+        )
+      : true;
+
+    return matchesSearch && matchesInterest;
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +54,6 @@ const Search = () => {
           throw new Error("Error fetching posts");
         }
         const responseData = await response.json();
-        console.log(responseData.received_requests);
         setData(responseData.received_requests);
       } catch (error) {
         console.log(error);
@@ -95,16 +115,20 @@ const Search = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(Array.isArray(data) ? data : []).map((user, index) => (
-                  <RequestCard
-                    key={index}
-                    id={user.request_id}
-                    name={user.sender_username}
-                    image={getProfilePicUrl(user.sender_profile_pic)}
-                    matchPercentage=""
-                    getElements={getElements}
-                  />
-                ))}
+                {(Array.isArray(filteredFriends) ? filteredFriends : []).map(
+                  (user, index) => (
+                    <RequestCard
+                      key={index}
+                      id={user.request_id}
+                      name={user.sender_username}
+                      image={getProfilePicUrl(user.sender_profile_pic)}
+                      interests={user.sender_interests}
+                      status={user.request.status}
+                      matchPercentage=""
+                      getElements={getElements}
+                    />
+                  )
+                )}
               </div>
             </div>
           </main>

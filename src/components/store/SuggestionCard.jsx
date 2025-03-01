@@ -11,6 +11,7 @@ export const SuggestionCard = ({
   interests,
   matchPercentage,
   connection,
+  isActive,
 }) => {
   const [isLiked, setIsLiked] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export const SuggestionCard = ({
   return (
     <div className="relative group cursor-pointer">
       <div className="relative overflow-hidden rounded-xl bg-white/90 backdrop-blur-sm border border-gray-100 shadow-lg transition-all duration-300 hover:shadow-xl group-hover:animate-card-hover">
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-slate-500">
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-medium text-slate-950">
           {matchPercentage}% Match
         </div>
         <div className="aspect-[9/10] overflow-hidden">
@@ -60,7 +61,11 @@ export const SuggestionCard = ({
               <LuHeart size={20} className={isLiked ? "fill-rose-500 " : ""} />
             </button>
             <button
-              onClick={() => navigate(`/people/${name}`)}
+              onClick={() =>
+                navigate(`/people/${name}`, {
+                  state: { isactive: isActive },
+                })
+              }
               className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-slate-600 text-white hover:bg-black transition-colors "
             >
               <span>{connection}</span>

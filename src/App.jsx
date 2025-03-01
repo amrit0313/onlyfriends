@@ -9,6 +9,7 @@ import Friends from "./components/PAGES/friends";
 import Profile from "./components/PAGES/profiles";
 import UserProfile from "./components/PAGES/userprofile";
 import Interests from "./components/PAGES/interests";
+import RequestProfile from "./components/PAGES/requestProfiles";
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("access_token"));
@@ -18,7 +19,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-screen w-full overflow-hidden max-h-screen">
       <div className="flex-shrink-1">
         <Navbar />
       </div>
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="/people/:username" element={<Profile />} />
           <Route path="/user" element={<UserProfile />} />
           <Route path="interests" element={<Interests />} />
+          <Route path="/friends/:username" element={<RequestProfile />} />
         </Routes>
       </div>
     </div>

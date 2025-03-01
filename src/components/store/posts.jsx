@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { LuHeart } from "react-icons/lu";
+import { MdOutlineDelete } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
 
 const Posts = ({ refetch }) => {
   const token = localStorage.getItem("access_token");
@@ -10,7 +12,6 @@ const Posts = ({ refetch }) => {
 
   const handleLike = async (id) => {
     await sendVoteRequest(id);
-    setUpdate((prev) => !prev);
   };
 
   const sendVoteRequest = async (id) => {
@@ -26,7 +27,31 @@ const Posts = ({ refetch }) => {
           },
         }
       );
-      console.log("response", response);
+      setUpdate((prev) => !prev);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/v1/posts/?post_id=${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast(errorData.detail);
+        throw new Error("error occurred");
+      }
+      toast.warn("Post Deleted");
+      setUpdate((prev) => !prev);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -88,7 +113,7 @@ const Posts = ({ refetch }) => {
         >
           <p className="font-extrabold">{item.content}</p>
           <div className="absolute bottom-3 left-10 text-slate-600">
-            <div className="flex item-center gap-2">
+            <div className="flex item-center gap-10">
               <div className="flex items-center">
                 <button
                   onClick={() => handleLike(item.id)}
@@ -112,6 +137,14 @@ const Posts = ({ refetch }) => {
               <p className="relative left-10 bottom-0 translate-y-3">
                 {new Date(item.created_at).toLocaleDateString()}
               </p>
+              {current_user == item.author_username && (
+                <button
+                  className="relative left-10 bottom-2 translate-y-3"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  <MdOutlineDelete size={25} style={{ color: " purple" }} />
+                </button>
+              )}
             </div>
           </div>
           <p className="absolute bottom-3 right-3 md:font-extrabold">
@@ -120,6 +153,7 @@ const Posts = ({ refetch }) => {
           </p>
         </div>
       ))}
+      <ToastContainer />
     </>
   );
 };

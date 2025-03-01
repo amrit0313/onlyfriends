@@ -95,13 +95,13 @@ const Home = () => {
       <div className="flex flex-col items-start   gap-5   w-full lg:w-3/4 h-screen  overflow-scroll scrollbar-thumb-green-500 scrollbar-track-green-200 relative">
         <div className="flex justify-evenly w-full">
           <div className=" flex justify-between md:justify-center items-center w-full gap-10 mx-5">
-            <div className="flex  h-[6rem] lg:h-[7rem] aspect-square bg-white m-2 ml-10 border-2 rounded-full border-slate-500 ">
+            <div className="flex  h-[6rem] lg:h-[7rem] aspect-square bg-white m-2 ml-10 border-2 rounded-full border-slate-500  object-cover">
               <button
                 className="flex justify-center items-center"
                 onClick={() => navigate("/user")}
               >
                 <img
-                  className="rounded-full h-[5rem] lg:h-[6rem] aspect-square m-2 "
+                  className="rounded-full h-[5rem] lg:h-[6rem] aspect-square m-2 object-cover "
                   src={user ? getProfilePicUrl(user) : download}
                   alt="error"
                 />
@@ -147,8 +147,8 @@ const Home = () => {
           <Posts refetch={postUpdated} />
         </div>
       </div>
-      <div className="hidden lg:flex flex-col items-start  h-screen w-1/4 bg-slate-200 z-[1]">
-        <h1 className="flex justify-center p-5 font-bold text-2xl  w-full text-black">
+      <div className="hidden lg:flex flex-col items-start  min-h-screen w-1/4 overflow-scroll bg-slate-200  relative">
+        <h1 className="flex  pl-10 p-5 font-bold text-2xl  w-full text-black ">
           Friends
         </h1>
         {friends?.map((user) => (
@@ -158,7 +158,7 @@ const Home = () => {
           >
             <Link
               to={`/people/${user.username}`}
-              className="flex pl-10 justify-start items-center w-full border-b-2 border-white py-5 text-slate-800 "
+              className="flex pl-10 justify-start items-center w-full  py-5 text-slate-800 "
             >
               <img
                 className="rounded-full h-[2rem] aspect-square m-2 "
