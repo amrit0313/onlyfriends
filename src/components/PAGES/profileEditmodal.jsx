@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 const ProfileEditModal = ({ close, update }) => {
   const token = localStorage.getItem("access_token");
-  const [profilePic, setProfilePic] = useState("default_profile_pic.jpeg");
+  const [profilePic, setProfilePic] = useState(null);
   const [bio, setBio] = useState("");
   const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
