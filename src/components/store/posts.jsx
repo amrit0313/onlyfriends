@@ -50,7 +50,9 @@ const Posts = ({ refetch }) => {
         toast(errorData.detail);
         throw new Error("error occurred");
       }
-      toast.warn("Post Deleted");
+      setTimeout(() => {
+        toast.warn("Post Deleted");
+      }, 500);
       setUpdate((prev) => !prev);
     } catch (error) {
       console.log("Error:", error);
@@ -105,7 +107,7 @@ const Posts = ({ refetch }) => {
   }, [refetch, update]);
 
   return (
-    <>
+    <div className="flex flex-col items-center w-full">
       {data.map((item) => (
         <div
           key={item.id}
@@ -152,7 +154,7 @@ const Posts = ({ refetch }) => {
         </div>
       ))}
       <ToastContainer />
-    </>
+    </div>
   );
 };
 

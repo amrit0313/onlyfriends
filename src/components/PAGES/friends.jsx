@@ -3,29 +3,20 @@ import { useState, useEffect } from "react";
 import { RequestCard } from "../store/friendreqs";
 import { ToastContainer, toast } from "react-toastify";
 
-const allUsers = [];
-
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedInterest, setSelectedInterest] = useState("");
   const [data, setData] = useState([]);
   const token = localStorage.getItem("access_token");
   const [render, setRender] = useState(false);
-  const [requestType, setRequestType] = useState("")
-  const allInterests = Array.from(
-    new Set(
-      data?.flatMap((user) =>
-        user.sender_interests.flatMap((i) => i.split(","))
-      )
-    )
-  );
+  const [requestType, setRequestType] = useState("received");
 
   const filteredFriends = data?.filter((user) => {
-    const matchesSearch = user.sender_username
+    const matchesSearch = user.username
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
-    const userInterests = user.sender_interests.flatMap((i) => i.split(","));
+    const userInterests = user.interests.flatMap((i) => i.split(","));
 
     const matchesInterest = selectedInterest
       ? userInterests.some(
@@ -36,6 +27,11 @@ const Search = () => {
 
     return matchesSearch && matchesInterest;
   });
+  const allInterests = Array.from(
+    new Set(
+      data?.flatMap((user) => user.interests.flatMap((i) => i.split(",")))
+    )
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,20 +50,28 @@ const Search = () => {
           throw new Error("Error fetching posts");
         }
         const responseData = await response.json();
-        setData(responseData.received_requests);
+        if (requestType === "received") {
+          setData(responseData.received_requests);
+        } else if (requestType === "sent") {
+          setData(responseData.sent_requests);
+        }
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchData();
-  }, [render]);
+  }, [render, requestType]);
 
   const getElements = (action) => {
     if (action === "accept") {
       toast("You are now friends");
-    } else {
+    } else if (action === "reject") {
       toast("Request Rejected");
+    } else if (action == "unsend") {
+      toast.success("Friend request unsent");
+    } else {
+      toast("error occurred");
     }
     setRender((prev) => !prev);
   };
@@ -102,8 +106,8 @@ const Search = () => {
                   </div>
 
                   <select
-                    value={selectedInterest}
-                    onChange={(e) => setSelectedInterest(e.target.value)}
+                    value={requestType}
+                    onChange={(e) => setRequestType(e.target.value)}
                     className="px-4 py-2 bg-gradient-to-bl from-indigo-200/50 to-white  rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent"
                   >
                     <option value="received">Received Requests</option>
@@ -124,19 +128,25 @@ const Search = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(Array.isArray(filteredFriends) ? filteredFriends : []).map(
-                  (user, index) => (
-                    <RequestCard
-                      key={index}
-                      id={user.request_id}
-                      name={user.sender_username}
-                      image={getProfilePicUrl(user.sender_profile_pic)}
-                      interests={user.sender_interests}
-                      status={user.request.status}
-                      matchPercentage=""
-                      getElements={getElements}
-                    />
-                  )
+                {filteredFriends?.map((user, index) => (
+                  <RequestCard
+                    key={index}
+                    id={user.request_id}
+                    requestType={requestType}
+                    name={user.username}
+                    image={getProfilePicUrl(user.profile_pic)}
+                    interests={user.interests}
+                    status={user.request.status}
+                    matchPercentage=""
+                    getElements={getElements}
+                    request={user.request}
+                  />
+                ))}
+
+                {!filteredFriends[0] && (
+                  <div className="no-requests  mx-auto p-5 text-center md:font-mono text-2xl text-slate-600 ">
+                    No Requests Pending
+                  </div>
                 )}
               </div>
             </div>

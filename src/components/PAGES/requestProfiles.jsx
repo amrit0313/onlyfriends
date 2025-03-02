@@ -11,6 +11,7 @@ import { MdNotInterested } from "react-icons/md";
 const RequestProfile = () => {
   const location = useLocation();
   const id = location.state?.id;
+  const requestType = location.state?.requestType;
   const status = location.state?.stat;
   const { username } = useParams();
   const [user, setuser] = useState({});
@@ -112,21 +113,35 @@ const RequestProfile = () => {
                         <span>{connectedStatus}</span>
                       </button>
                     ) : (
-                      <div className="mt-4 flex justify-evenly items-center gap-2">
-                        <button
-                          onClick={(e) => handleRequest(e, "reject", id)}
-                          className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-slate-900 text-white hover:bg-slate-500 transition-colors "
-                        >
-                          <MdNotInterested />
-                          <span>Delete </span>
-                        </button>
-                        <button
-                          onClick={(e) => handleRequest(e, "accept", id)}
-                          className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-rose-500 hover:bg-rose-600 active:bg-white  text-white  transition-colors "
-                        >
-                          <BiUserPlus />
-                          <span>Accept</span>
-                        </button>
+                      <div className="mt-4 flex justify-evenly items-center">
+                        {requestType == "received" && (
+                          <button
+                            onClick={(e) => handleRequest(e, "reject", id)}
+                            className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-slate-900 text-white hover:bg-slate-500 transition-colors "
+                          >
+                            <MdNotInterested />
+                            <span>Delete </span>
+                          </button>
+                        )}
+                        {requestType == "sent" && (
+                          <button
+                            onClick={(e) => handleRequest(e, "reject", id)}
+                            className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-slate-400 text-white hover:bg-slate-500 transition-colors "
+                          >
+                            <MdNotInterested />
+                            <span>unsend request </span>
+                          </button>
+                        )}
+
+                        {requestType == "received" && (
+                          <button
+                            onClick={(e) => handleRequest(e, "accept", id)}
+                            className="inline-flex items-center justify-center px-4 py-2 gap-3 rounded-full bg-rose-500 hover:bg-rose-600 active:bg-white  text-white  transition-colors "
+                          >
+                            <BiUserPlus />
+                            <span>Accept</span>
+                          </button>
+                        )}
                       </div>
                     )}
 

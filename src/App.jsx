@@ -17,17 +17,28 @@ const App = () => {
   useEffect(() => {
     setToken(localStorage.getItem("access_token"));
   }, []);
+  const deleteToken = () => {
+    setToken(localStorage.clear());
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden max-h-screen">
-      <div className="flex-shrink-1">
-        <Navbar />
-      </div>
+      {token && (
+        <div className="flex-shrink-1">
+          <Navbar />
+        </div>
+      )}
       <div className="flex-grow bg-slate-100 overflow-auto">
         <Routes>
           <Route
             path="/"
-            element={token ? <Home /> : <AuthPage setToken={setToken} />}
+            element={
+              token ? (
+                <Home deleteToken={deleteToken} />
+              ) : (
+                <AuthPage setToken={setToken} />
+              )
+            }
           />
           <Route path="auth" element={<AuthPage setToken={setToken} />} />
           <Route path="/chat" element={<Chat />} />

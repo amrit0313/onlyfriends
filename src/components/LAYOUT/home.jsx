@@ -6,7 +6,7 @@ import "../../styles/tooltip.css";
 import download from "../../assets/download.png";
 import { ToastContainer, toast } from "react-toastify";
 
-const Home = () => {
+const Home = ({ deleteToken }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState("");
   const token = localStorage.getItem("access_token");
@@ -83,7 +83,7 @@ const Home = () => {
   };
 
   const handleSignout = () => {
-    localStorage.clear();
+    deleteToken();
     navigate("auth");
   };
   const getProfilePicUrl = (path) => {
@@ -161,7 +161,7 @@ const Home = () => {
               className="flex pl-10 justify-start items-center w-full  py-5 text-slate-800 "
             >
               <img
-                className="rounded-full h-[2rem] aspect-square m-2 "
+                className="rounded-full h-[2rem] aspect-square m-2 object-cover "
                 src={
                   user?.profile_pic
                     ? getProfilePicUrl(user.profile_pic)

@@ -164,10 +164,10 @@ export default function ChatApp() {
 
   return (
     <div className="flex h-screen bg-white pb-14 lg:pb-0">
-      <div className="hidden md:block w-1/4 p-4 bg-white shadow-lg shadow-slate-800 overflow-auto">
-        <h2 className="text-lg font-semibold mb-4">Chats</h2>
+      <div className="hidden md:block w-1/4  bg-white shadow-lg shadow-slate-800 overflow-auto">
+        <h2 className="text-lg font-semibold ml-5 my-4">Chats</h2>
         {users.length === 0 ? (
-          <p>Loading users...</p>
+          <p className="pl-10 font-extrabold text-rose-800">No users found</p>
         ) : (
           users
             .sort((a, b) => {
@@ -200,7 +200,7 @@ export default function ChatApp() {
                   }}
                 >
                   <img
-                    className="rounded-full h-[2rem] aspect-square m-2"
+                    className="rounded-full h-[2.5rem] aspect-square m-2 object-cover"
                     src={
                       user?.profile_pic
                         ? getProfilePicUrl(user.profile_pic)
@@ -224,12 +224,12 @@ export default function ChatApp() {
                   (user, index) =>
                     activeChat === getChatId(user.user_id) && (
                       <div
-                        className="flex justify-between px-5 py-3 w-full"
+                        className="flex justify-between px-5 py-1 w-full"
                         key={index}
                       >
                         <div className="flex  items-center gap-3">
                           <img
-                            className="rounded-full h-[2rem] aspect-square m-2"
+                            className="rounded-full h-[3rem] aspect-square m-2 object-cover"
                             src={
                               user?.profile_pic
                                 ? getProfilePicUrl(user.profile_pic)
@@ -241,7 +241,7 @@ export default function ChatApp() {
                         </div>
 
                         <button onClick={deleteMessages}>
-                          <MdDelete size={25} style={{ fill: "#ec407a" }} />
+                          <MdDelete size={25} style={{ fill: "#E53935" }} />
                         </button>
                       </div>
                     )
@@ -254,7 +254,7 @@ export default function ChatApp() {
                   {messages.map((msg) => (
                     <div
                       key={msg.id}
-                      className={`my-1 px-10 py-3  font-serif text-black font-bold rounded-lg w-fit max-w-[20rem] ${
+                      className={`my-1 px-10 py-3  font-serif text-black font-normal rounded-lg w-fit max-w-[20rem] ${
                         msg.sender === currentUserId
                           ? "bg-purple-500/20 mr-5 self-end"
                           : "bg-gray-100 ml-5 self-start"
@@ -312,7 +312,7 @@ export default function ChatApp() {
         <div className="block mx-auto my-5  md:hidden w-11/12  p-4 bg-stone-100 shadow-lg shadow-slate-500 rounded-lg overflow-auto">
           <h2 className="text-lg font-semibold mb-4">Chats</h2>
           {users.length === 0 ? (
-            <p>Loading users...</p>
+            <p className="pl-10 font-extrabold text-rose-800">No users found</p>
           ) : (
             users
               .sort((a, b) => {
@@ -340,7 +340,7 @@ export default function ChatApp() {
                   }}
                 >
                   <img
-                    className="rounded-full h-[2rem] aspect-square m-2"
+                    className="rounded-full h-[2rem] aspect-square m-2 object-cover"
                     src={
                       user?.profile_pic
                         ? getProfilePicUrl(user.profile_pic)
@@ -375,7 +375,7 @@ export default function ChatApp() {
                               <IoIosArrowBack size={28} />
                             </button>
                             <img
-                              className="rounded-full h-[2rem] aspect-square m-2"
+                              className="rounded-full h-[2rem] aspect-square m-2 object-cover"
                               src={
                                 user?.profile_pic
                                   ? getProfilePicUrl(user.profile_pic)

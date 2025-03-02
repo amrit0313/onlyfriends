@@ -62,7 +62,7 @@ const AuthPage = ({ setToken }) => {
       if (!response.ok) {
         setError(true);
         const errorData = await response.json();
-        toast(errorData.detail);
+        toast.warn(errorData.detail);
         console.log("Error:", errorData.detail);
         throw new Error("Error");
       }
