@@ -364,18 +364,18 @@ export default function ChatApp() {
                     (user, index) =>
                       activeChat === getChatId(user.user_id) && (
                         <div
-                          className="flex justify-between px-5 py-3 w-full"
+                          className="flex justify-between pl-3 py-3 w-full"
                           key={index}
                         >
-                          <div className="flex  items-center gap-3">
+                          <div className="flex  items-center gap-1">
                             <button
-                              className="w-10"
+                              className="w-8"
                               onClick={() => setActiveChat(null)}
                             >
                               <IoIosArrowBack size={28} />
                             </button>
                             <img
-                              className="rounded-full h-[2rem] aspect-square m-2 object-cover"
+                              className="rounded-full h-[2rem] aspect-square mx-1 my-2 object-cover"
                               src={
                                 user?.profile_pic
                                   ? getProfilePicUrl(user.profile_pic)
@@ -400,7 +400,7 @@ export default function ChatApp() {
                     {messages.map((msg, index) => (
                       <div
                         key={index}
-                        className={`my-1 px-10 py-3 font-normal font-serif text-purple-950 rounded-lg w-fit max-w-[20rem] ${
+                        className={`my-1 px-3 py-3 font-normal font-serif text-purple-950 rounded-lg w-fit max-w-[15rem] ${
                           msg.sender === currentUserId
                             ? "bg-rose-200/50 mr-5 self-end"
                             : "bg-gray-100 ml-5 self-start"
