@@ -2,4 +2,4 @@
   from = "/v1*"
   to = "{{ env.VITE_API_URL }}/v1/:splat"
   status = 200
-  force = true
+  force = true  git pull --rebase origin main
