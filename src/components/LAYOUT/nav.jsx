@@ -87,7 +87,7 @@ const Navbar = ({ onLogout }) => {
         </div>
       </div>
 
-      <div className=" flex flex-row lg:hidden bg-slate-200 h-[60px] absolute bottom-0 w-full z-[100] ">
+      <div className=" flex flex-row lg:hidden bg-slate-200 h-[60px] fixed bottom-0 w-full z-[100] ">
         {navlinks.slice(0, 4).map((link, index) => (
           <NavLink
             key={index}

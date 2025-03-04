@@ -74,34 +74,30 @@ const Interests = () => {
   };
 
   return (
-    <>
-      <div className="flex items-center gap-10 m-5 md:m-20 pt-5 pb-32 relative">
-        <div className="flex justify-evenly flex-wrap gap-5 pb-20">
-          {Interest?.map((interest) => (
-            <button
-              key={interest.id}
-              onClick={() => handleClick(interest)}
-              className={`w-32 py-2 border-2 border-slate-300 rounded-xl ${
-                selectedInterests.some(
-                  (selected) => selected.id === interest.id
-                )
-                  ? "bg-gray-400 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
-              {interest.name}
-            </button>
-          ))}
-        </div>
-        <button
-          type="submit"
-          onClick={submitHandler}
-          className="bg-black shadow-xl shadow-slate-300 px-10 py-5 absolute right-0 bottom-14 lg:bottom-0 border-2 border-gray-700 rounded-2xl hover:bg-gray-800 active:animate-bounce active:bg-black text-white"
-        >
-          Continue to profile
-        </button>
+    <div className="flex items-center gap-10 m-5 md:m-20 pt-5 pb-32 relative">
+      <div className="flex justify-evenly flex-wrap gap-5 pb-20">
+        {Interest?.map((interest) => (
+          <button
+            key={interest.id}
+            onClick={() => handleClick(interest)}
+            className={`w-32 py-2 border-2 border-slate-300 rounded-xl ${
+              selectedInterests.some((selected) => selected.id === interest.id)
+                ? "bg-gray-400 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            {interest.name}
+          </button>
+        ))}
       </div>
-    </>
+      <button
+        type="submit"
+        onClick={submitHandler}
+        className="bg-black shadow-xl shadow-slate-300 px-10 py-5 absolute right-0 bottom-14 lg:bottom-0 border-2 border-gray-700 rounded-2xl hover:bg-gray-800 active:animate-bounce active:bg-black text-white"
+      >
+        Continue to profile
+      </button>
+    </div>
   );
 };
 
